@@ -1,0 +1,1374 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Matemáticas I · Generador de ejercicios</title>
+<style>
+:root{--bg:#f5f4ef;--card:#fff;--tx:#1b1b1f;--mu:#6a6a72;--ac:#3b4cca;--act:#fff;--bd:#e4e2da;--hl:#eef0ff;--ok:#1f8a5b;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#141417;--card:#1f1f24;--tx:#ecebe6;--mu:#a3a29b;--ac:#8d9bff;--act:#10131f;--bd:#34343a;--hl:#23263a;--ok:#5fd3a0;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#141417;--card:#1f1f24;--tx:#ecebe6;--mu:#a3a29b;--ac:#8d9bff;--act:#10131f;--bd:#34343a;--hl:#23263a;--ok:#5fd3a0;color-scheme:dark}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+.wrap{max-width:620px;margin:0 auto;padding:18px 16px 40px}
+h1{font-size:1.35rem;margin:0}
+.sub{color:var(--mu);font-size:.88rem;margin:2px 0 16px}
+select{width:100%;padding:11px;border-radius:12px;border:1px solid var(--bd);background:var(--card);color:var(--tx);font:inherit;margin-bottom:10px}
+.chips{display:flex;gap:6px;margin-bottom:10px}
+.chip{flex:1;padding:9px 0;border-radius:999px;border:1px solid var(--bd);background:var(--card);color:var(--mu);font:inherit;font-size:.9rem;cursor:pointer}
+.chip.on{background:var(--ac);border-color:var(--ac);color:var(--act);font-weight:600}
+.btn{width:100%;padding:13px;border-radius:12px;border:0;background:var(--ac);color:var(--act);font:inherit;font-weight:600;cursor:pointer}
+.btn.o{background:transparent;border:1.5px solid var(--ac);color:var(--ac)}
+.ex{background:var(--card);border:1px solid var(--bd);border-radius:18px;padding:18px;margin:16px 0 12px}
+.tag{font-size:.72rem;color:var(--mu);text-transform:uppercase;letter-spacing:.06em}
+.math{font-family:Cambria,"Times New Roman",Georgia,serif}
+#q{font-size:1.25rem;margin-top:8px;overflow-x:auto}
+.step{display:flex;gap:12px;margin-bottom:12px;animation:in .3s ease}
+@keyframes in{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.n{flex:none;width:28px;height:28px;border-radius:50%;background:var(--ac);color:var(--act);font-weight:700;font-size:.85rem;display:flex;align-items:center;justify-content:center;margin-top:2px}
+.b{flex:1;min-width:0;background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:12px 14px}
+.b h3{font-size:.98rem;margin:0 0 8px}
+.m{background:var(--hl);border-radius:10px;padding:10px 12px;font-size:1.12rem;overflow-x:auto}
+.w{margin:8px 0 0;font-size:.9rem;color:var(--mu)}
+.w b{color:var(--ac)}
+.done{text-align:center;color:var(--ok);font-weight:600;padding:8px}
+.rf{margin:0;font:1rem/1.35 ui-monospace,Menlo,Consolas,monospace;white-space:pre;overflow-x:auto}
+.fg{width:100%;max-width:340px;height:auto;display:block;margin:10px auto 0}
+.fg text{fill:var(--tx);font:13px system-ui,sans-serif;paint-order:stroke;stroke:var(--card);stroke-width:3px;stroke-linejoin:round}
+.fg .u{fill:var(--ac);font-weight:700}
+.fg .v{fill:var(--mu);font-weight:700}
+.tr{fill:var(--hl);stroke:var(--ac);stroke-width:2;stroke-linejoin:round}
+.ra,.da{fill:none;stroke:var(--ac);stroke-width:1.5}
+.da{stroke-dasharray:4 3}
+math{math-style:normal;font-size:1.1em}
+.exh{font-weight:700;margin:16px 0 8px}
+.exr{display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:10px 12px;margin-bottom:8px}
+.exr span{flex:1;font-size:.95rem}
+.exr input[type=checkbox]{width:20px;height:20px;accent-color:var(--ac)}
+.exr input[type=number]{width:58px;padding:7px;border-radius:8px;border:1px solid var(--bd);background:var(--card);color:var(--tx);font:inherit;text-align:center}
+.exr input[disabled]{opacity:.4}
+.eq{font-size:1.15rem;margin-top:8px;overflow-x:auto}
+.pv{width:100%;border:1px solid var(--bd);border-radius:8px;margin:8px 0;background:#fff;display:block}
+#bls{flex-wrap:wrap}
+#bls .chip{flex:1 1 30%;min-width:96px}
+.hid{display:none}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>Matemáticas I · 1.º Bachillerato</h1>
+<p class="sub">Ciencias y Tecnología (Andalucía)</p>
+<div class="chips" id="modes"><button class="chip on" data-m="ej">Ejercicios</button><button class="chip" data-m="ex">Generación de examen</button></div>
+<div id="pEj">
+<div class="chips" id="bls"><button class="chip on" data-b="alg">Polinomios</button><button class="chip" data-b="trig">Trigonometría</button><button class="chip" data-b="geo">Geometría</button><button class="chip" data-b="ana">Análisis</button></div>
+<select id="pl" aria-label="Tema"></select>
+<select id="sub" class="hid" aria-label="Subtipo"></select>
+<div class="chips" id="chips"><button class="chip" data-d="1">Fácil</button><button class="chip on" data-d="2">Media</button><button class="chip" data-d="3">Difícil</button></div>
+<button class="btn" id="go">Nuevo ejercicio</button>
+<div class="ex"><div class="tag" id="tag"></div><div id="q" class="math"></div></div>
+<div id="steps"></div>
+<button class="btn o" id="nx"></button>
+<div class="done hid" id="dn">✓ Ejercicio resuelto</div>
+</div>
+<div id="pEx" class="hid">
+<p class="sub">Marca las categorías, indica cuántos ejercicios quieres de cada una y elige la dificultad.</p>
+<div id="exCats"></div>
+<div class="exh">Dificultad</div>
+<div class="chips" id="exDif"><button class="chip" data-d="1">Fácil</button><button class="chip on" data-d="2">Media</button><button class="chip" data-d="3">Difícil</button><button class="chip" data-d="0">Mixta</button></div>
+<button class="btn" id="exGo">Generar examen</button>
+<div id="exOut"></div>
+</div>
+</div>
+<script>
+const ri=(a,b)=>Math.floor(Math.random()*(b-a+1))+a;
+const nz=r=>{let n=0;while(!n)n=ri(-r,r);return n};
+const num=n=>String(n).replace('-','−');
+const p=n=>n<0?'('+num(n)+')':num(n);
+const ss=(n,s='')=>(n<0?' − ':' + ')+Math.abs(n)+s;
+const tm=(n,s)=>(n<0?' − ':' + ')+(Math.abs(n)===1?'':Math.abs(n))+s;
+const gcd=(a,b)=>b?gcd(b,a%b):Math.abs(a);
+const red=(n,d)=>{const g=gcd(n,d)||1;n/=g;d/=g;if(d<0){n=-n;d=-d}return[n,d]};
+const frs=(n,d)=>d===1?num(n):num(n)+'/'+d;
+const f=x=>String(parseFloat(x.toFixed(2))).replace('.',',');
+const sen=x=>Math.sin(x*Math.PI/180),cos=x=>Math.cos(x*Math.PI/180),tg=x=>Math.tan(x*Math.PI/180),dg=x=>x*180/Math.PI;
+const NL=String.fromCharCode(10);
+const pw=['','x','x²','x³','x⁴'];
+const poly=co=>{let s='';const n=co.length-1;co.forEach((c,i)=>{const e=n-i;if(!c)return;const a=Math.abs(c),t=(a===1&&e>0?'':a)+pw[e];s+=s?(c<0?' − ':' + ')+t:(c<0?'−':'')+t;});return s};
+const rad=n=>{let s=1;for(let t=2;t*t<=n;t++)if(n%(t*t)===0)s=t;const i=n/(s*s);return i===1?String(s):(s===1?'':s)+'√'+i};
+const divs=x=>{const a=Math.abs(x),v=[];for(let i=1;i<=a;i++)if(a%i===0)v.push(i);return v};
+const ev=(c,r)=>c.reduce((a,x)=>a*r+x,0);
+function ruf(co,r){
+  const res=[co[0]],pr=[''];
+  for(let i=1;i<co.length;i++){const v=res[i-1]*r;pr.push(v);res.push(co[i]+v);}
+  const s=x=>x===''?'':num(x);
+  const W=Math.max(...co.map(x=>s(x).length),...res.map(x=>s(x).length),...pr.map(x=>s(x).length))+2,L=num(r).length+3;
+  const row=(lab,a)=>lab.padStart(L)+a.map(x=>s(x).padStart(W)).join('');
+  return{res,t:row('',co)+NL+row(num(r)+' |',pr)+NL+'─'.repeat(L+W*co.length)+NL+row('',res)};
+}
+function quad(A,B,C,v){
+  const D=B*B-4*A*C,q=4*A*C,sb=['₁','₂'];
+  const st=[
+    ['Identificamos los coeficientes',`a = ${A}, b = ${num(B)}, c = ${num(C)}`,`Se lee la ecuación como ax² + bx + c = 0 (con ${v} como incógnita) y se toman a, b y c con su signo.`],
+    ['Escribimos la fórmula general',`${v} = (−b ± √(b² − 4ac)) / 2a`,'Esta fórmula resuelve cualquier ecuación de 2.º grado.'],
+    ['Sustituimos los valores',`${v} = (${B===0?'0':'−'+p(B)} ± √(${p(B)}² − 4·${A}·${p(C)})) / (2·${A})`,'Cada coeficiente va entre paréntesis para no equivocarse con los signos.'],
+    ['Calculamos lo que hay dentro de la raíz',`${p(B)}² − 4·${A}·${p(C)} = ${B*B} ${q<0?'+':'−'} ${Math.abs(q)} = ${D}`,D>0?'Es positivo: habrá dos soluciones reales.':D===0?'Es cero: habrá una única solución (doble).':'Es negativo y no existe la raíz de un negativo en ℝ: no hay soluciones reales.']];
+  if(D<0){st.push(['Conclusión','<b>No tiene soluciones reales</b>','Una ecuación de 2.º grado con discriminante negativo no tiene soluciones reales.']);return{st,sols:[]};}
+  const s=Math.round(Math.sqrt(D)),m=D===0?[[-B,2*A]]:[[-B+s,2*A],[-B-s,2*A]];
+  const sols=m.map(([n,d])=>{const[r,e]=red(n,d);return{v:r/e,s:frs(r,e)}});
+  if(D===0)st.push(['Calculamos la solución',`${v} = ${num(-B)} / ${2*A} = ${sols[0].s}`,'Con discriminante 0 el ± no cambia nada: las dos soluciones coinciden.']);
+  else st.push(['Separamos las dos soluciones',`${v}${sb[0]} = (${num(-B)} + ${s}) / ${2*A} = ${sols[0].s}<br>${v}${sb[1]} = (${num(-B)} − ${s}) / ${2*A} = ${sols[1].s}`,'El símbolo ± da dos soluciones: una sumando la raíz y otra restándola.']);
+  return{st,sols};
+}
+function figOld(S,L,o={}){
+  const{a,b,c}=S,cA=(b*b+c*c-a*a)/(2*b*c),sA=Math.sqrt(Math.max(0,1-cA*cA)),K=['A','B','C'];
+  const P={A:[0,0],B:[c,0],C:[b*cA,-b*sA]};
+  const xs=K.map(k=>P[k][0]),ys=K.map(k=>P[k][1]),x0=Math.min(...xs),y0=Math.min(...ys);
+  const W=300,H=190,m=36,w=Math.max(...xs)-x0||1,h=Math.max(...ys)-y0||1,sc=Math.min((W-2*m)/w,(H-2*m)/h);
+  const Q={};K.forEach(k=>{Q[k]=[m+(P[k][0]-x0)*sc+(W-2*m-w*sc)/2,m+(P[k][1]-y0)*sc+(H-2*m-h*sc)/2]});
+  const g=[0,1].map(i=>(Q.A[i]+Q.B[i]+Q.C[i])/3);
+  const mv=(pt,d)=>{const dx=pt[0]-g[0],dy=pt[1]-g[1],l=Math.hypot(dx,dy)||1;return[pt[0]+dx/l*d,pt[1]+dy/l*d]};
+  const mid=(u,v)=>[(Q[u][0]+Q[v][0])/2,(Q[u][1]+Q[v][1])/2];
+  const tx=(pt,s,cl)=>s?`<text x='${pt[0].toFixed(1)}' y='${(pt[1]+4).toFixed(1)}' text-anchor='middle' class='${cl||(String(s).includes('?')?'u':'')}'>${s}</text>`:'';
+  let s=`<svg viewBox='0 0 ${W} ${H}' class='fg'><polygon class='tr' points='${K.map(k=>Q[k].map(z=>z.toFixed(1)).join(',')).join(' ')}'/>`;
+  if(o.right){
+    const V=Q[o.right],[u,r]=K.filter(k=>k!==o.right).map(k=>{const dx=Q[k][0]-V[0],dy=Q[k][1]-V[1],l=Math.hypot(dx,dy)||1;return[dx/l*11,dy/l*11]});
+    s+=`<polyline class='ra' points='${V[0]+u[0]},${V[1]+u[1]} ${V[0]+u[0]+r[0]},${V[1]+u[1]+r[1]} ${V[0]+r[0]},${V[1]+r[1]}'/>`;
+  }
+  if(o.alt){s+=`<line class='da' x1='${Q.C[0]}' y1='${Q.C[1]}' x2='${Q.C[0]}' y2='${Q.A[1]}'/>`+tx([Q.C[0]+22,(Q.C[1]+Q.A[1])/2],L.w);}
+  s+=tx(mv(mid('B','C'),16),L.a)+tx(mv(mid('C','A'),16),L.b)+tx(mv(mid('A','B'),16),L.c);
+  K.forEach(k=>{
+    s+=tx(mv(Q[k],15),L[k],'v');
+    if(L['g'+k]){const dx=g[0]-Q[k][0],dy=g[1]-Q[k][1],l=Math.hypot(dx,dy)||1;s+=tx([Q[k][0]+dx/l*32,Q[k][1]+dy/l*32],L['g'+k]);}
+  });
+  return s+'</svg>';
+}
+const T={
+cuadratica(d){
+  let A,B,C;
+  if(d===3&&Math.random()<.25){A=ri(1,2);B=ri(-3,3);C=Math.ceil(B*B/(4*A))+ri(1,4);}
+  else{const a1=d===1?1:ri(1,d),a2=d===3?ri(1,3):1,r=d===1?5:8,q1=nz(r),q2=nz(r);A=a1*a2;B=-(a1*q2+a2*q1);C=q1*q2;}
+  const eq=`${A===1?'':A}x²${B?tm(B,'x'):''}${ss(C)} = 0`,Q=quad(A,B,C,'x'),st=Q.st.slice();
+  if(Q.sols.length)st.push(['Escribimos las soluciones',Q.sols.map(s=>`<b>x = ${s.s}</b>`).join(' y '),'Son los valores de x que cumplen la ecuación.']);
+  return{q:`Resuelve en ℝ: ${eq}`,steps:st};
+},
+bicuadrada(d){
+  const k=d===3?ri(2,3):1,sq=[1,4,9,16];let t1,t2;
+  do{t1=d===1?sq[ri(0,3)]:ri(1,9);t2=d===1?sq[ri(0,3)]:d===2?-ri(1,9):(Math.random()<.5?1:-1)*ri(1,9);}while(t1===t2);
+  const A=k,B=-k*(t1+t2),C=k*t1*t2,lead=A===1?'':A;
+  const eq=`${lead}x⁴${B?tm(B,'x²'):''}${ss(C)} = 0`,eqt=`${lead}t²${B?tm(B,'t'):''}${ss(C)} = 0`;
+  const {st,sols}=quad(A,B,C,'t'),xs=[];
+  const ln=sols.map(s=>{if(s.v>0){xs.push(rad(s.v),'−'+rad(s.v));return `x² = ${s.s} → x = ±√${s.s} = ±${rad(s.v)}`;}return `x² = ${num(s.v)} → x = ±√(${num(s.v)}) → no existe en ℝ`;});
+  return{q:`Resuelve en ℝ: ${eq}`,steps:[
+    ['Hacemos el cambio de variable',`t = x² → ${eqt}`,'Como solo aparecen x⁴ y x², llamando t a x² queda una ecuación de 2.º grado en t. A partir de aquí se resuelve igual que cualquier ecuación de 2.º grado.'],
+    ...st,
+    ['Deshacemos el cambio x² = t',ln.join('<br>'),'Cada t positivo da dos valores de x (la raíz y su opuesta). Si t es negativo no hay raíz real.'],
+    ['Escribimos las soluciones',xs.length?`<b>x = ${xs.join(', ')}</b>`:'<b>No tiene soluciones reales</b>',xs.length?`Tiene ${xs.length} soluciones reales.`:'Ningún valor de t es positivo, así que no hay soluciones reales.']]};
+},
+ruffini(d){
+  const n=d===3?4:3,mx=d===1?3:d===2?5:4,roots=[];
+  while(roots.length<n){const r=nz(mx);if(d===1&&roots.includes(r))continue;roots.push(r);}
+  let co=[1];
+  roots.forEach(r=>{const nc=Array(co.length+1).fill(0);co.forEach((c,i)=>{nc[i]+=c;nc[i+1]-=r*c;});co=nc;});
+  const steps=[
+    ['Ordenamos el polinomio y completamos los huecos',`P(x) = ${poly(co)}<br>Coeficientes: ${co.map(num).join('  ')}`,'Se ordena de mayor a menor grado. Si faltara algún término se escribiría un 0 en su lugar, para no descolocar la tabla de Ruffini.'],
+    ['Buscamos las posibles raíces enteras',`Término independiente: ${num(co[co.length-1])}<br>Divisores: ±${divs(co[co.length-1]).join(', ±')}`,'Si un polinomio con coeficientes enteros tiene una raíz entera, esa raíz divide a su término independiente.']];
+  let cur=co.slice(),first=true;const found=[];
+  while(cur.length>3){
+    const cd=divs(cur[cur.length-1]).flatMap(x=>[x,-x]),i=cd.findIndex(x=>ev(cur,x)===0),r=cd[i];
+    let ls=cd.slice(0,i+1).map(x=>{const v=ev(cur,x);return `P(${num(x)}) = ${num(v)} → ${v?'no es raíz':'es raíz'}`;});
+    if(ls.length>6)ls=['…',...ls.slice(-5)];
+    steps.push(['Probamos los divisores en orden',ls.join('<br>'),first?'Evaluamos el polinomio en cada divisor (1, −1, 2, −2…). Si da 0, ese número es raíz; si no, se descarta.':'Repetimos con el cociente: probamos los divisores de su término independiente.']);
+    const u=ruf(cur,r);
+    steps.push([`Aplicamos Ruffini con x = ${num(r)}`,`<pre class='rf'>${u.t}</pre>`,first?`Se baja el primer coeficiente, se multiplica por ${num(r)} y se suma al siguiente, y así hasta el final. El último número es el resto: como vale 0, x = ${num(r)} es raíz. Los demás son los coeficientes del cociente.`:'Mismo procedimiento. El resto vuelve a ser 0 y el cociente baja un grado.']);
+    first=false;found.push(r);cur=u.res.slice(0,-1);
+  }
+  steps.push(['Nos queda una ecuación de 2.º grado',`${poly(cur)} = 0`,'Cuando el cociente llega a grado 2 ya no hace falta seguir con Ruffini: se resuelve con la fórmula general.']);
+  const Q=quad(1,cur[1],cur[2],'x');steps.push(...Q.st);
+  Q.sols.length===1?found.push(Q.sols[0].v,Q.sols[0].v):found.push(...Q.sols.map(s=>s.v));
+  const fac=found.map(r=>r<0?`(x + ${-r})`:`(x − ${r})`).join(''),uniq=[...new Set(found)];
+  steps.push(['Escribimos la factorización y las soluciones',`${poly(co)} = ${fac} = 0<br><b>x = ${uniq.map(num).join(', ')}</b>`,'Un producto es 0 cuando algún factor es 0, así que cada raíz da una solución.'+(uniq.length<found.length?' Las raíces repetidas se escriben una vez, pero cuentan con su multiplicidad.':'')]);
+  return{q:`Resuelve: ${poly(co)} = 0`,steps};
+},
+razones(d){
+  const TR=[[3,4,5],[5,12,13],[8,15,17],[7,24,25],[20,21,29]],tr=TR[ri(0,d===1?1:4)],k=d===1?1:ri(1,2);
+  const [a,b]=Math.random()<.5?[tr[0]*k,tr[1]*k]:[tr[1]*k,tr[0]*k],c=tr[2]*k,al=dg(Math.atan2(a,b)),hid=d>1;
+  const eq=(n,m)=>{const [r,s]=red(n,m),w=n+'/'+m,v=frs(r,s);return w===v?w:w+' = '+v};
+  const S={a,b,c},o={right:'C'},N={A:'A',B:'B',C:'C'};
+  const fq=fig(S,{...N,a:`${a}`,b:`${b}`,c:hid?'c = ?':`${c}`,gA:'α'},o),fs=fig(S,{...N,a:`${a}`,b:`${b}`,c:`${c}`,gA:d===3?`α = ${f(al)}°`:'α'},o);
+  const steps=[['Identificamos los lados respecto al ángulo α',`Cateto opuesto: a = ${a}<br>Cateto contiguo: b = ${b}<br>Hipotenusa: c ${hid?'= ?':'= '+c}`,'El opuesto está enfrente de α, el contiguo toca a α, y la hipotenusa es el lado enfrente del ángulo recto.']];
+  if(hid)steps.push(['Calculamos la hipotenusa',`c = √(a² + b²) = √(${a*a} + ${b*b}) = √${a*a+b*b} = ${c}`,'Por el teorema de Pitágoras, c² = a² + b².']);
+  steps.push(['Aplicamos las definiciones',`sen α = opuesto / hipotenusa = ${eq(a,c)}<br>cos α = contiguo / hipotenusa = ${eq(b,c)}<br>tg α = opuesto / contiguo = ${eq(a,b)}`,'Son las tres razones trigonométricas. Se simplifican las fracciones.']);
+  if(d===3)steps.push(['Calculamos el ángulo',`α = arctg(${a}/${b}) = ${f(al)}°`,'Con la calculadora en grados: la función inversa de una razón devuelve el ángulo.']);
+  const R=(n,m)=>frs(...red(n,m));
+  steps.push(['Resultado',`<b>sen α = ${R(a,c)}, cos α = ${R(b,c)}, tg α = ${R(a,b)}</b>`,'Estas razones no dependen del tamaño del triángulo, solo del ángulo.']);
+  return{q:`En el triángulo rectángulo de la figura, calcula sen α, cos α y tg α${d===3?' y el ángulo α':''}.`,fq,fs,steps};
+},
+rectangulo(d){
+  const A=d===1?[30,45,60][ri(0,2)]:ri(20,70),t1=d===1||Math.random()<.5,B=90-A;
+  let a,b,c;
+  if(t1){c=ri(8,40);a=c*sen(A);b=c*cos(A);}else{b=ri(6,30);a=b*tg(A);c=b/cos(A);}
+  const S={a,b,c},o={right:'C'},N={A:'A',B:'B',C:'C'};
+  const fq=fig(S,{...N,a:t1?'a = ?':'a = ?',b:t1?'b = ?':`b = ${b} cm`,c:t1?`c = ${c} cm`:'c = ?',gA:`${A}°`,gB:'B = ?'},o);
+  const fs=fig(S,{...N,a:`a = ${f(a)}`,b:`b = ${f(b)}`,c:`c = ${f(c)}`,gA:`${A}°`,gB:`${B}°`},o);
+  const steps=[['Calculamos el otro ángulo agudo',`B = 90° − ${A}° = ${B}°`,'En un triángulo rectángulo los dos ángulos agudos suman 90°.']];
+  if(t1)steps.push(['Calculamos el cateto a',`sen A = a / c → a = c·sen A = ${c}·sen ${A}° = ${f(a)}`,'El seno relaciona el cateto opuesto con la hipotenusa: despejamos a.'],['Calculamos el cateto b',`cos A = b / c → b = c·cos A = ${c}·cos ${A}° = ${f(b)}`,'El coseno relaciona el cateto contiguo con la hipotenusa: despejamos b.']);
+  else steps.push(['Calculamos el cateto a',`tg A = a / b → a = b·tg A = ${b}·tg ${A}° = ${f(a)}`,'La tangente relaciona los dos catetos: despejamos a.'],['Calculamos la hipotenusa c',`cos A = b / c → c = b / cos A = ${b} / cos ${A}° = ${f(c)}`,'El coseno relaciona el cateto contiguo con la hipotenusa: despejamos c.']);
+  steps.push(['Resultado',`<b>a ≈ ${f(a)}, ${t1?'b':'c'} ≈ ${f(t1?b:c)}, B = ${B}°</b>`,'Las medidas se redondean a dos decimales.']);
+  return{q:`Resuelve el triángulo rectángulo de la figura (ángulo recto en C): ${t1?`hipotenusa c = ${c} cm`:`cateto b = ${b} cm`} y A = ${A}°.`,fq,fs,steps};
+},
+seno(d){
+  const A=ri(35,80),B=ri(35,80),C=180-A-B,a=ri(8,30),b=a*sen(B)/sen(A),c=a*sen(C)/sen(A),n2=d>1,S={a,b,c};
+  const fq=fig(S,{A:'A',B:'B',C:'C',a:`a = ${a}`,b:'b = ?',c:n2?'c = ?':'',gA:`${A}°`,gB:`${B}°`,gC:'?'});
+  const fs=fig(S,{A:'A',B:'B',C:'C',a:`a = ${a}`,b:`b = ${f(b)}`,c:n2?`c = ${f(c)}`:'',gA:`${A}°`,gB:`${B}°`,gC:`${C}°`});
+  const steps=[['Calculamos el tercer ángulo',`C = 180° − ${A}° − ${B}° = ${C}°`,'Los tres ángulos de un triángulo suman 180°.'],
+    ['Escribimos el teorema del seno','a / sen A = b / sen B = c / sen C','Los lados son proporcionales a los senos de sus ángulos opuestos. Lo usamos porque conocemos un lado y su ángulo opuesto.'],
+    ['Calculamos b',`b = a·sen B / sen A = ${a}·sen ${B}° / sen ${A}° = ${f(b)}`,'Igualamos a / sen A con b / sen B y despejamos b.']];
+  if(n2)steps.push(['Calculamos c',`c = a·sen C / sen A = ${a}·sen ${C}° / sen ${A}° = ${f(c)}`,'Igual que antes, con c y su ángulo opuesto C.']);
+  steps.push(['Resultado',`<b>C = ${C}°, b ≈ ${f(b)}${n2?`, c ≈ ${f(c)}`:''}</b>`,'Lados redondeados a dos decimales.']);
+  return{q:`Resuelve el triángulo: A = ${A}°, B = ${B}° y a = ${a}. Calcula ${n2?'C, b y c':'C y b'}.`,fq,fs,steps};
+},
+coseno(d){
+  const b=ri(6,30),c=ri(6,30),A=ri(35,120),a=Math.sqrt(b*b+c*c-2*b*c*cos(A)),B=dg(Math.acos((a*a+c*c-b*b)/(2*a*c))),C=180-A-B,S={a,b,c};
+  const fq=fig(S,{A:'A',B:'B',C:'C',a:'a = ?',b:`b = ${b}`,c:`c = ${c}`,gA:`${A}°`,gB:d>1?'?':'',gC:d>2?'?':''});
+  const fs=fig(S,{A:'A',B:'B',C:'C',a:`a = ${f(a)}`,b:`b = ${b}`,c:`c = ${c}`,gA:`${A}°`,gB:d>1?`${f(B)}°`:'',gC:d>2?`${f(C)}°`:''});
+  const steps=[['Escribimos el teorema del coseno','a² = b² + c² − 2bc·cos A','Conocemos dos lados y el ángulo que forman: es el caso del teorema del coseno.'],
+    ['Sustituimos los valores',`a² = ${b}² + ${c}² − 2·${b}·${c}·cos ${A}° = ${f(a*a)}`,'Se calcula el coseno con la calculadora en grados.'],
+    ['Calculamos la raíz',`a = √${f(a*a)} = ${f(a)}`,'El lado es la raíz positiva.']];
+  if(d>1)steps.push(['Calculamos el ángulo B',`cos B = (a² + c² − b²) / (2ac) = ${f((a*a+c*c-b*b)/(2*a*c))} → B = ${f(B)}°`,'Despejamos cos B del teorema del coseno y usamos la función inversa.']);
+  if(d>2)steps.push(['Calculamos el ángulo C',`C = 180° − ${A}° − ${f(B)}° = ${f(C)}°`,'Los ángulos de un triángulo suman 180°.']);
+  steps.push(['Resultado',`<b>a ≈ ${f(a)}${d>1?`, B ≈ ${f(B)}°`:''}${d>2?`, C ≈ ${f(C)}°`:''}</b>`,'Valores redondeados a dos decimales.']);
+  return{q:`Resuelve el triángulo: b = ${b}, c = ${c} y A = ${A}°. Calcula ${d===1?'a':d===2?'a y B':'a, B y C'}.`,fq,fs,steps};
+},
+real(d){
+  const kind=d===1?0:d===2?ri(0,1):2;
+  if(kind===0){
+    const dd=ri(10,80),al=ri(20,65),eye=d===2,h=dd*tg(al),S={a:h,b:dd/cos(al),c:dd},o={right:'B'},N={A:'Obs.',B:'Base',C:'Cima'};
+    const fq=fig(S,{...N,a:'h = ?',b:'',c:`${dd} m`,gA:`${al}°`},o),fs=fig(S,{...N,a:`h = ${f(h)} m`,b:'',c:`${dd} m`,gA:`${al}°`},o);
+    const steps=[['Interpretamos el dibujo',`Cateto contiguo = ${dd} m<br>Ángulo = ${al}°<br>Cateto opuesto = h`,'La visual, el suelo y el edificio forman un triángulo rectángulo. Un esquema con los datos ayuda a elegir la razón.'],
+      ['Elegimos la razón trigonométrica',`tg ${al}° = opuesto / contiguo = h / ${dd}`,'Conocemos el cateto contiguo y buscamos el opuesto: los relaciona la tangente.'],
+      ['Despejamos h',`h = ${dd}·tg ${al}° = ${f(h)} m`,'Multiplicamos por el cateto contiguo.']];
+    if(eye)steps.push(['Sumamos la altura de los ojos',`${f(h)} + 1,6 = ${f(h+1.6)} m`,'La visual parte de los ojos del observador, no del suelo.']);
+    steps.push(['Resultado',`<b>El edificio mide ≈ ${f(h+(eye?1.6:0))} m</b>`,'Respuesta con su unidad y redondeada a dos decimales.']);
+    return{q:`Desde un punto situado a ${dd} m de la base de un edificio se ve su parte más alta con un ángulo de elevación de ${al}°.${eye?' Los ojos del observador están a 1,6 m del suelo.':''} ¿Qué altura tiene el edificio?`,fq,fs,steps};
+  }
+  if(kind===1){
+    const b=ri(200,900),c=ri(200,900),A=ri(35,110),a=Math.sqrt(b*b+c*c-2*b*c*cos(A)),S={a,b,c},N={A:'Faro',B:'B1',C:'B2'};
+    const fq=fig(S,{...N,a:'d = ?',b:`${b} m`,c:`${c} m`,gA:`${A}°`}),fs=fig(S,{...N,a:`d = ${f(a)} m`,b:`${b} m`,c:`${c} m`,gA:`${A}°`});
+    return{q:`Desde un faro se ven dos barcos: B1 a ${c} m y B2 a ${b} m, y las dos visuales forman un ángulo de ${A}°. ¿Qué distancia hay entre los barcos?`,fq,fs,steps:[
+      ['Interpretamos el dibujo',`Faro–B1: ${c} m<br>Faro–B2: ${b} m<br>Ángulo en el faro: ${A}°`,'No hay ángulo recto, pero conocemos dos lados y el ángulo que forman: usamos el teorema del coseno.'],
+      ['Aplicamos el teorema del coseno',`d² = ${b}² + ${c}² − 2·${b}·${c}·cos ${A}° = ${f(a*a)}`,'El lado opuesto al ángulo conocido es la distancia buscada.'],
+      ['Calculamos la raíz',`d = √${f(a*a)} = ${f(a)} m`,'La distancia es la raíz positiva.'],
+      ['Resultado',`<b>Los barcos están a ≈ ${f(a)} m</b>`,'Respuesta con su unidad.']]};
+  }
+  const c=ri(30,120),A=ri(40,75),B=ri(40,75),C=180-A-B,b=c*sen(B)/sen(C),a=c*sen(A)/sen(C),w=b*sen(A),S={a,b,c},o={alt:1},N={A:'A',B:'B',C:'Árbol'};
+  const fq=fig(S,{...N,a:'',b:'',c:`${c} m`,gA:`${A}°`,gB:`${B}°`,w:'w = ?'},o),fs=fig(S,{...N,a:'',b:`${f(b)} m`,c:`${c} m`,gA:`${A}°`,gB:`${B}°`,gC:`${C}°`,w:`w = ${f(w)} m`},o);
+  return{q:`Para medir la anchura de un río se marcan dos puntos A y B en una orilla, a ${c} m uno de otro. Desde ellos se ve un árbol C de la orilla opuesta bajo ángulos de ${A}° (en A) y ${B}° (en B). ¿Qué anchura w tiene el río?`,fq,fs,steps:[
+    ['Calculamos el ángulo C',`C = 180° − ${A}° − ${B}° = ${C}°`,'Los ángulos del triángulo ABC suman 180°. La anchura w es la altura desde C hasta la orilla.'],
+    ['Calculamos la distancia AC con el teorema del seno',`b / sen B = c / sen C → b = ${c}·sen ${B}° / sen ${C}° = ${f(b)} m`,'Conocemos el lado AB y su ángulo opuesto C, así que podemos hallar AC.'],
+    ['Calculamos la anchura w',`sen A = w / b → w = ${f(b)}·sen ${A}° = ${f(w)} m`,'En el triángulo rectángulo que forma la altura, w es el cateto opuesto a A.'],
+    ['Resultado',`<b>El río mide ≈ ${f(w)} m de ancho</b>`,'Respuesta con su unidad.']]};
+}};
+const BL={alg:['Polinomios',[['cuadratica','Ecuaciones de 2.º grado'],['bicuadrada','Ecuaciones bicuadradas'],['ruffini','Ecuaciones polinómicas (Ruffini)'],['xden','Ecuaciones racionales (x en el denominador)'],['expo','Ecuaciones exponenciales (cambio de variable)'],['logs','Ecuaciones logarítmicas'],['sist2den','Sistemas de ecuaciones racionales'],['sistcuad','Sistemas no lineales (con x²)'],['gauss','Sistemas lineales 3×3 (método de Gauss)'],['gaussreal','Problemas de sistemas 3×3 (Gauss)']]],
+  trig:['Trigonometría',[['razones','Razones trigonométricas'],['rectangulo','Resolución de triángulos rectángulos'],['seno','Teorema del seno'],['coseno','Teorema del coseno'],['real','Aplicaciones reales de la trigonometría'],['radianes','Radianes y longitud de arco'],['fsuma','Ángulo suma y diferencia'],['fdoble','Ángulo doble'],['fmitad','Ángulo mitad'],['teq','Ecuaciones trigonométricas'],['triangulo','Resolución de triángulos (caso general)'],['razcuad','Razones conocida una razón y el cuadrante'],['cuatro','Ecuaciones trigonométricas (razón al cuadrado)'],['rbasico','Problemas de triángulos rectángulos (básico)'],['rcomplejo','Problemas de triángulos rectángulos (dos observaciones)'],['isosceles','Problemas con triángulos isósceles']]]};
+const rr=(n,d)=>red(n,d===undefined?1:d),fs=x=>frs(x[0],x[1]);
+const rm=(x,y)=>rr(x[0]*y[0],x[1]*y[1]),rsb=(x,y)=>rr(x[0]*y[1]-y[0]*x[1],x[1]*y[1]),rdv=(x,y)=>rr(x[0]*y[1],x[1]*y[0]);
+const pq=(A,B,C)=>`${A===1?'':A}x²${B?tm(B,'x'):''}${C?ss(C):''} = 0`;
+const fm=x=>f(x).replace('-','−');
+function gs(M){
+  const eqn=r=>{let s='';[0,1,2].forEach(j=>{const c=r[j];if(!c)return;const a=Math.abs(c),t=(a===1?'':a)+'xyz'[j];s+=s?(c<0?' − ':' + ')+t:(c<0?'−':'')+t;});return s+' = '+num(r[3])};
+  const mt=m=>m.map(r=>r.slice(0,3).map(x=>num(x).padStart(4)).join('')+'  |'+num(r[3]).padStart(5)).join(NL);
+  const A=M.map(r=>r.slice()),rd=r=>{const g=r.reduce((a,x)=>gcd(a,x),0)||1;return r.map(x=>x/g)};
+  const op=(i,k)=>{const a=A[k][k],b=A[i][k];if(b===0)return null;A[i]=rd(A[i].map((x,c)=>a*x-b*A[k][c]));return `E${i+1} → ${a}·E${i+1} − ${p(b)}·E${k+1}`};
+  const st=[['Escribimos el sistema y su matriz ampliada',`${M.map(eqn).join('<br>')}<pre class='rf'>${mt(M)}</pre>`,'La matriz ampliada guarda solo los coeficientes y los términos independientes: así es más fácil operar.']];
+  const o1=[op(1,0),op(2,0)].filter(Boolean);
+  st.push(['Hacemos ceros bajo el primer pivote',o1.join('<br>')+`<pre class='rf'>${mt(A)}</pre>`,'Combinamos filas para que debajo del pivote de la 1.ª columna queden ceros. Si una fila queda con números grandes se divide entre un divisor común.']);
+  const o2=op(2,1);
+  st.push(['Hacemos cero bajo el segundo pivote',(o2||'La fila 3 ya tiene el cero')+`<pre class='rf'>${mt(A)}</pre>`,'Se repite con la 2.ª columna: el sistema queda escalonado.']);
+  const z=A[2][3]/A[2][2],y=(A[1][3]-A[1][2]*z)/A[1][1],x=(A[0][3]-A[0][1]*y-A[0][2]*z)/A[0][0];
+  st.push(['Resolvemos de abajo arriba',`z = ${num(A[2][3])} / ${p(A[2][2])} = ${num(z)}<br>y = (${num(A[1][3])} − ${p(A[1][2])}·${p(z)}) / ${p(A[1][1])} = ${num(y)}<br>x = (${num(A[0][3])} − ${p(A[0][1])}·${p(y)} − ${p(A[0][2])}·${p(z)}) / ${p(A[0][0])} = ${num(x)}`,'Se despeja la última incógnita y se sustituye hacia arriba.']);
+  return{st,sol:[x,y,z]};
+}
+function genSys(R,pos){
+  for(;;){
+    const s=[0,1,2].map(()=>pos?ri(1,6):(ri(-4,4)||1));
+    const M=[0,1,2].map(()=>{const r=[0,1,2].map(()=>pos?ri(0,R):ri(-R,R));return[...r,r[0]*s[0]+r[1]*s[1]+r[2]*s[2]]});
+    const D=M[0][0]*(M[1][1]*M[2][2]-M[1][2]*M[2][1])-M[0][1]*(M[1][0]*M[2][2]-M[1][2]*M[2][0])+M[0][2]*(M[1][0]*M[2][1]-M[1][1]*M[2][0]);
+    if(D&&M[0][0]&&M[0][0]*M[1][1]-M[1][0]*M[0][1])return M;
+  }
+}
+T.gauss=function(d){
+  const M=genSys(d+1,false),G=gs(M);
+  return{q:'Resuelve por el método de Gauss:<br>'+M.map(r=>{let s='';[0,1,2].forEach(j=>{const c=r[j];if(!c)return;const a=Math.abs(c),t=(a===1?'':a)+'xyz'[j];s+=s?(c<0?' − ':' + ')+t:(c<0?'−':'')+t;});return s+' = '+num(r[3])}).join('<br>'),steps:[...G.st,['Resultado',`<b>x = ${num(G.sol[0])}, y = ${num(G.sol[1])}, z = ${num(G.sol[2])}</b>`,'Se puede comprobar sustituyendo en las tres ecuaciones originales.']]};
+};
+T.gaussreal=function(d){
+  const nm=[['café','tostada','zumo'],['bolígrafo','cuaderno','carpeta'],['entrada de adulto','de niño','de jubilado']][ri(0,2)],M=genSys(4,true),G=gs(M);
+  const tx=r=>{const a=[0,1,2].filter(j=>r[j]).map(j=>`${r[j]} ${nm[j]}`);return a.length>1?a.slice(0,-1).join(', ')+' y '+a[a.length-1]:a[0]};
+  return{q:'Tres compras: '+M.map((r,i)=>`${i+1}.ª) ${tx(r)} cuestan ${r[3]} €`).join('; ')+`. Calcula el precio de cada artículo (${nm.join(', ')}).`,steps:[['Definimos las incógnitas',`x = precio de ${nm[0]}<br>y = precio de ${nm[1]}<br>z = precio de ${nm[2]}`,'Cada artículo es una incógnita; cada compra da una ecuación: cantidad × precio, sumado, igual al total.'],...G.st,['Resultado',`<b>${nm[0]}: ${G.sol[0]} €, ${nm[1]}: ${G.sol[1]} €, ${nm[2]}: ${G.sol[2]} €</b>`,'Respuesta con las unidades del problema.']]};
+};
+T.xden=function(d){
+  let r1,r2;do{r1=nz(5);r2=nz(5);}while(r1===r2||(d===3&&(r1===-1||r2===-1)));
+  let eq,mu,A,B,C,rs='x ≠ 0';
+  if(d<3){const c=d===1?1:ri(2,3),m=c*(r1+r2),k=c*r1*r2,cs=c===1?'':c;A=c;B=-m;C=k;eq=`${cs}x${ss(k,'/x')} = ${num(m)}`;mu=`${cs}x²${ss(k)} = ${num(m)}x`;}
+  else{const m=ri(1,3),a=-m*r1*r2,b=m*(1+r1)*(1+r2);A=m;B=m-a-b;C=-a;eq=`${num(a)}/x${ss(b,'/(x + 1)')} = ${m}`;mu=`${num(a)}(x + 1) ${b<0?'−':'+'} ${Math.abs(b)}x = ${m}x(x + 1)`;rs='x ≠ 0 y x ≠ −1';}
+  const Q=quad(A,B,C,'x');
+  return{q:`Resuelve: ${eq}`,steps:[['Indicamos qué valores no puede tomar x',rs,'No se puede dividir entre 0, así que esos valores quedan prohibidos.'],['Multiplicamos por el denominador común',mu,'Multiplicar los dos miembros por el m.c.m. de los denominadores elimina las fracciones.'],['Ordenamos como ecuación de 2.º grado',pq(A,B,C),'Pasamos todo a un miembro y ordenamos de mayor a menor grado.'],...Q.st,['Comprobamos y escribimos las soluciones',`<b>${Q.sols.map(s=>'x = '+s.s).join(' y ')}</b><br>Ninguna anula un denominador: son válidas.`,'Hay que comprobar que las soluciones no coinciden con los valores prohibidos.']]};
+};
+T.expo=function(d){
+  const b=ri(2,3),k1=ri(0,3),t1=b**k1;let t2;
+  if(d===3)t2=-ri(1,4);else{let k2;do{k2=ri(0,3);}while(k2===k1);t2=b**k2;}
+  const B=-(t1+t2),C=t1*t2,Q=quad(1,B,C,'t'),xs=[],X=`<sup>x</sup>`;
+  const ln=Q.sols.map(s=>{if(s.v>0){const k=Math.round(Math.log(s.v)/Math.log(b));xs.push(k);return `${b}${X} = ${s.s} = ${b}<sup>${k}</sup> → x = ${k}`;}return `${b}${X} = ${num(s.v)} → imposible: una potencia de base positiva nunca es negativa`;});
+  return{q:`Resuelve: ${b*b}${X}${B?tm(B,b+X):''}${ss(C)} = 0`,steps:[['Escribimos todo con la misma base',`${b*b}${X} = (${b}²)${X} = (${b}${X})²`,'Una potencia de potencia se multiplica en el exponente: así aparece (' +b+'x) al cuadrado.'],['Hacemos el cambio de variable',`t = ${b}${X} → t²${B?tm(B,'t'):''}${ss(C)} = 0`,'Con t = '+b+'x queda una ecuación de 2.º grado en t.'],...Q.st,['Deshacemos el cambio',ln.join('<br>'),'Cada valor positivo de t se escribe como potencia de '+b+' para igualar exponentes.'],['Resultado',`<b>x = ${xs.join(', ')}</b>`,'Los valores de t que no dan solución se descartan.']]};
+};
+T.logs=function(d){
+  if(d===3){
+    const [r,a,k]=[[1,1,1],[2,2,3],[1,3,2],[2,6,4],[4,4,5],[4,12,6]][ri(0,5)],Q=quad(1,a,-(2**k),'x');
+    return{q:`Resuelve: log₂ x + log₂ (x + ${a}) = ${k}`,steps:[['Indicamos el dominio',`x > 0 y x + ${a} > 0 → x > 0`,'El argumento de un logaritmo debe ser positivo.'],['Agrupamos los logaritmos',`log₂ [x(x + ${a})] = ${k}`,'Suma de logaritmos: log A + log B = log (A·B). Queda un solo logaritmo.'],['Quitamos el logaritmo',`x(x + ${a}) = 2<sup>${k}</sup> = ${2**k}`,'Por definición, log₂ y = k equivale a y = 2<sup>k</sup>.'],['Ordenamos',pq(1,a,-(2**k)),'Desarrollamos y pasamos todo a un miembro.'],...Q.st,['Comprobamos el dominio',`x = ${r} cumple x > 0 ✓<br>x = ${-(r+a)} no cumple x > 0 ✗`,'Las soluciones que no cumplen el dominio se descartan.'],['Resultado',`<b>x = ${r}</b>`,'Solo es válida la solución positiva.']]};
+  }
+  const m=d===1?5:9;let r,s;do{r=ri(1,m);s=ri(1,m);}while(r===s);
+  const a=s-r,b=r*s,Q=quad(1,a,-b,'x'),ar=a>0?`x + ${a}`:`x − ${-a}`,lo=Math.max(0,-a);
+  return{q:`Resuelve: log x + log (${ar}) = log ${b}`,steps:[['Indicamos el dominio',`x > 0 y ${ar} > 0 → x > ${lo}`,'El argumento de un logaritmo debe ser positivo.'],['Agrupamos los logaritmos',`log [x(${ar})] = log ${b}`,'Suma de logaritmos: log A + log B = log (A·B). Así queda un solo logaritmo en cada miembro.'],['Igualamos los argumentos',`x(${ar}) = ${b}`,'Si log A = log B, entonces A = B.'],['Ordenamos',pq(1,a,-b),'Desarrollamos y pasamos todo a un miembro.'],...Q.st,['Comprobamos el dominio',`x = ${r} cumple x > ${lo} ✓<br>x = ${-s} no cumple ✗`,'Las soluciones que no cumplen el dominio se descartan.'],['Resultado',`<b>x = ${r}</b>`,'Solo es válida una solución.']]};
+};
+T.sist2den=function(d){
+  let a,b,e,g,x0,y0,det;
+  do{a=nz(3);b=nz(3);e=nz(3);g=nz(3);det=a*g-b*e;x0=nz(d===1?2:3);y0=nz(d===1?2:3);}while(!det);
+  const c=rr(a*y0+b*x0,x0*y0),h=rr(e*y0+g*x0,x0*y0),nu=rsb(rm([g,1],c),rm([b,1],h)),nv=rsb(rm([a,1],h),rm([e,1],c)),U=rdv(nu,[det,1]),V=rdv(nv,[det,1]);
+  return{q:`Resuelve: ${num(a)}/x${ss(b,'/y')} = ${fs(c)}  y  ${num(e)}/x${ss(g,'/y')} = ${fs(h)}`,steps:[
+    ['Hacemos el cambio de variable',`u = 1/x, v = 1/y<br>${num(a)}u${ss(b,'v')} = ${fs(c)}<br>${num(e)}u${ss(g,'v')} = ${fs(h)}`,'Con u = 1/x y v = 1/y el sistema pasa a ser lineal. Antes: x ≠ 0 e y ≠ 0.'],
+    ['Resolvemos por reducción',`Eliminamos v: ${g}·(1.ª) − ${p(b)}·(2.ª)<br>${num(det)}u = ${fs(nu)} → u = ${fs(U)}<br>Eliminamos u: ${a}·(2.ª) − ${p(e)}·(1.ª)<br>${num(det)}v = ${fs(nv)} → v = ${fs(V)}`,'Se multiplican las ecuaciones por números que igualen los coeficientes de una incógnita y se restan.'],
+    ['Deshacemos el cambio',`x = 1/u = ${x0}<br>y = 1/v = ${y0}`,'Como u = 1/x, entonces x = 1/u (lo mismo con y).'],
+    ['Resultado',`<b>x = ${num(x0)}, y = ${num(y0)}</b>`,'Se comprueba que no anulan ningún denominador.']]};
+};
+T.sistcuad=function(d){
+  const m=d===1?5:8;let u,v;do{u=nz(m);v=nz(m);}while(u===v||u+v===0);
+  let e1,y1,e2,sub,exp,Q,A,B,C,yf;
+  if(d===1){const s=u+v,pp=u*v;e1=`x + y = ${num(s)}`;e2=`x·y = ${num(pp)}`;y1=`y = ${num(s)} − x`;sub=`x(${num(s)} − x) = ${num(pp)}`;exp=`${num(s)}x − x² = ${num(pp)} → ${pq(1,-s,pp)}`;A=1;B=-s;C=pp;yf=x=>s-x;}
+  else{const k=u+v;e1=`x − y = ${num(k)}`;e2=`x² + y² = ${u*u+v*v}`;y1=`y = x − ${p(k)}`;sub=`x² + (x − ${p(k)})² = ${u*u+v*v}`;exp=`2x² − ${p(2*k)}x + ${k*k} = ${u*u+v*v} → ${pq(2,-2*k,2*u*v)}`;A=2;B=-2*k;C=2*u*v;yf=x=>x-k;}
+  Q=quad(A,B,C,'x');const pr=Q.sols.map(s=>[s.v,yf(s.v)]);
+  return{q:`Resuelve el sistema: ${e1}  y  ${e2}`,steps:[['Despejamos una incógnita de la ecuación lineal',y1,'Se despeja en la ecuación de 1.er grado para poder sustituir.'],['Sustituimos en la ecuación de 2.º grado',sub,'Así queda una sola ecuación con una incógnita.'],['Desarrollamos y ordenamos',exp,'Se desarrolla y se pasa todo a un miembro.'],...Q.st,['Calculamos y para cada x',pr.map(q=>`x = ${num(q[0])} → y = ${num(q[1])}`).join('<br>'),'Cada valor de x se sustituye en la ecuación despejada.'],['Resultado',`<b>${pr.map(q=>`(${num(q[0])}, ${num(q[1])})`).join(' y ')}</b>`,'Un sistema con una ecuación de 2.º grado puede tener dos soluciones.']]};
+};
+T.triangulo=function(d){
+  const r=ri(0,2);if(r===0)return T.seno(2);if(r===1)return T.coseno(3);
+  let a,b,c;do{a=ri(5,20);b=ri(5,20);c=ri(5,20);}while(a+b<=c||a+c<=b||b+c<=a);
+  const cA=(b*b+c*c-a*a)/(2*b*c),cB=(a*a+c*c-b*b)/(2*a*c),A=dg(Math.acos(cA)),B=dg(Math.acos(cB)),C=180-A-B,S={a,b,c},N={A:'A',B:'B',C:'C',a:`${a}`,b:`${b}`,c:`${c}`};
+  return{q:`Resuelve el triángulo de lados a = ${a}, b = ${b} y c = ${c}. Calcula sus tres ángulos.`,fq:fig(S,{...N,gA:'?',gB:'?',gC:'?'}),fs:fig(S,{...N,gA:`${f(A)}°`,gB:`${f(B)}°`,gC:`${f(C)}°`}),steps:[['Elegimos el teorema del coseno','a² = b² + c² − 2bc·cos A','Conocemos los tres lados y ningún ángulo: el teorema del coseno permite despejar cada ángulo.'],['Calculamos A',`cos A = (b² + c² − a²) / (2bc) = (${b*b} + ${c*c} − ${a*a}) / ${2*b*c} = ${fm(cA)} → A = ${f(A)}°`,'Se despeja cos A y se usa la función inversa en la calculadora.'],['Calculamos B',`cos B = (a² + c² − b²) / (2ac) = (${a*a} + ${c*c} − ${b*b}) / ${2*a*c} = ${fm(cB)} → B = ${f(B)}°`,'Igual que antes, con el lado b opuesto a B.'],['Calculamos C',`C = 180° − ${f(A)}° − ${f(B)}° = ${f(C)}°`,'Los tres ángulos suman 180°.'],['Resultado',`<b>A ≈ ${f(A)}°, B ≈ ${f(B)}°, C ≈ ${f(C)}°</b>`,'Valores redondeados a dos decimales.']]};
+};
+T.razcuad=function(d){
+  const [a,b,h]=[[3,4,5],[5,12,13],[8,15,17],[7,24,25]][ri(0,3)],q=ri(1,4),sS=q<3?1:-1,sC=(q===1||q===4)?1:-1,sT=sS*sC;
+  const S=frs(sS*a,h),C=frs(sC*b,h),Tn=frs(...red(sT*a,b)),fn=['sen','cos','tg'][ri(0,d===1?1:2)],Q=['1.er','2.º','3.er','4.º'][q-1],g=fn==='sen'?S:fn==='cos'?C:Tn;
+  const sg=(w,s)=>`En el ${Q} cuadrante el ${w} es ${s<0?'negativo':'positivo'}.`;
+  let st;
+  if(fn==='sen')st=[['Calculamos cos α con la identidad fundamental',`cos²α = 1 − sen²α = 1 − (${S})² = ${b*b}/${h*h} → cos α = ${C}`,sg('coseno',sC)],['Calculamos tg α',`tg α = sen α / cos α = (${S}) / (${C}) = ${Tn}`,'La tangente es el cociente entre el seno y el coseno.']];
+  else if(fn==='cos')st=[['Calculamos sen α con la identidad fundamental',`sen²α = 1 − cos²α = 1 − (${C})² = ${a*a}/${h*h} → sen α = ${S}`,sg('seno',sS)],['Calculamos tg α',`tg α = sen α / cos α = (${S}) / (${C}) = ${Tn}`,'La tangente es el cociente entre el seno y el coseno.']];
+  else st=[['Calculamos cos α con 1 + tg²α = 1 / cos²α',`1 + (${Tn})² = ${h*h}/${b*b} → cos²α = ${b*b}/${h*h} → cos α = ${C}`,sg('coseno',sC)],['Calculamos sen α',`sen α = tg α · cos α = (${Tn})·(${C}) = ${S}`,'De tg α = sen α / cos α se despeja el seno.']];
+  return{q:`Sabiendo que ${fn} α = ${g} y que α está en el ${Q} cuadrante, calcula las otras dos razones trigonométricas.`,steps:[...st,['Resultado',`<b>sen α = ${S}, cos α = ${C}, tg α = ${Tn}</b>`,'Comprobación: sen²α + cos²α = 1.']]};
+};
+T.cuatro=function(){
+  const fn=['sen','cos','tg'][ri(0,2)],[sq,vs,x0]={sen:[['1/4','1/2',30],['1/2','√2/2',45],['3/4','√3/2',60]],cos:[['1/4','1/2',60],['1/2','√2/2',45],['3/4','√3/2',30]],tg:[['1/3','√3/3',30],['1','1',45],['3','√3',60]]}[fn][ri(0,2)],xs=[x0,180-x0,180+x0,360-x0];
+  return{q:`Halla los 4 ángulos de [0°, 360°) que cumplen ${fn}²x = ${sq}.`,steps:[['Quitamos el cuadrado',`${fn}²x = ${sq} → ${fn} x = ±√(${sq}) = ±${vs}`,'Al hacer la raíz aparecen dos ecuaciones: una con signo + y otra con signo −.'],['Ángulo de referencia',`${fn} x₀ = ${vs} → x₀ = ${fn==='sen'?'arcsen':fn==='cos'?'arccos':'arctg'}(${vs}) = ${x0}°`,'Con el valor positivo se obtiene un ángulo agudo.'],['Un ángulo en cada cuadrante',`1.er: x = ${x0}°<br>2.º: x = 180° − ${x0}° = ${180-x0}°<br>3.er: x = 180° + ${x0}° = ${180+x0}°<br>4.º: x = 360° − ${x0}° = ${360-x0}°`,'Como el ± permite valores positivos y negativos, hay una solución en cada cuadrante con el mismo ángulo de referencia.'],['Resultado',`<b>x = ${xs.join('°, x = ')}°</b>`,'Son los cuatro ángulos que cumplen la condición en una vuelta.']]};
+};
+T.rbasico=function(){
+  const k=ri(0,2);if(k===0)return T.real(1);
+  const al=ri(25,70),o={right:'B'};
+  if(k===1){
+    const s=ri(4,30),h=s*tg(al),S={a:h,b:s/cos(al),c:s},N={A:'Sombra',B:'Pie',C:'Punta'};
+    return{q:`Un poste proyecta una sombra de ${s} m cuando los rayos del sol forman ${al}° con el suelo. ¿Cuánto mide el poste?`,fq:fig(S,{...N,a:'h = ?',b:'',c:`${s} m`,gA:`${al}°`},o),fs:fig(S,{...N,a:`h = ${f(h)} m`,b:'',c:`${s} m`,gA:`${al}°`},o),steps:[['Interpretamos el dibujo',`Sombra (cateto contiguo) = ${s} m<br>Ángulo = ${al}°<br>Poste (cateto opuesto) = h`,'El poste, su sombra y el rayo de sol forman un triángulo rectángulo.'],['Elegimos la razón',`tg ${al}° = h / ${s}`,'Conocemos el cateto contiguo y buscamos el opuesto: la tangente.'],['Despejamos h',`h = ${s}·tg ${al}° = ${f(h)} m`,'Multiplicamos por el cateto contiguo.'],['Resultado',`<b>El poste mide ≈ ${f(h)} m</b>`,'Respuesta con su unidad.']]};
+  }
+  const L=ri(3,8),h=L*sen(al),S={a:h,b:L,c:L*cos(al)},N={A:'Suelo',B:'Pared',C:'Punta'};
+  return{q:`Una escalera de ${L} m se apoya en una pared formando ${al}° con el suelo. ¿A qué altura llega?`,fq:fig(S,{...N,a:'h = ?',b:`${L} m`,c:'',gA:`${al}°`},o),fs:fig(S,{...N,a:`h = ${f(h)} m`,b:`${L} m`,c:'',gA:`${al}°`},o),steps:[['Interpretamos el dibujo',`Escalera (hipotenusa) = ${L} m<br>Ángulo con el suelo = ${al}°<br>Altura (cateto opuesto) = h`,'La escalera, el suelo y la pared forman un triángulo rectángulo.'],['Elegimos la razón',`sen ${al}° = h / ${L}`,'Conocemos la hipotenusa y buscamos el cateto opuesto: el seno.'],['Despejamos h',`h = ${L}·sen ${al}° = ${f(h)} m`,'Multiplicamos por la hipotenusa.'],['Resultado',`<b>La escalera llega a ≈ ${f(h)} m</b>`,'Respuesta con su unidad.']]};
+};
+T.rcomplejo=function(){
+  const al=ri(20,40),be=ri(al+8,60),dd=ri(10,60),k=1/tg(al)-1/tg(be),h=dd/k,x=h/tg(be);
+  const dr=lh=>{
+    const sc=Math.min(190/(x+dd),115/h),Q=250,P2=Q-x*sc,P1=Q-(x+dd)*sc,Tp=150-h*sc;
+    const t=(X,Y,s,c,an)=>`<text x='${X.toFixed(0)}' y='${Y.toFixed(0)}' text-anchor='${an||'middle'}' class='${c||''}'>${s}</text>`;
+    return `<svg viewBox='0 0 300 190' class='fg'><polygon class='tr' points='${P1.toFixed(0)},150 ${Q},150 ${Q},${Tp.toFixed(0)}'/><line class='da' x1='${P2.toFixed(0)}' y1='150' x2='${Q}' y2='${Tp.toFixed(0)}'/>`+t(P1,168,`α = ${al}°`)+t(P2,184,`β = ${be}°`)+t((P1+P2)/2,142,`${dd} m`)+t(Q-6,(150+Tp)/2,lh,lh.includes('?')?'u':'','end')+'</svg>';
+  };
+  return{q:`Desde dos puntos alineados con la base de una torre y separados ${dd} m, se ve su cima con ángulos de elevación de ${al}° (el punto más lejano) y ${be}° (el más cercano). ¿Qué altura tiene la torre?`,fq:dr('h = ?'),fs:dr(`h = ${f(h)} m`),steps:[['Planteamos dos triángulos rectángulos',`Punto cercano: tg ${be}° = h / x<br>Punto lejano: tg ${al}° = h / (x + ${dd})`,'Hay dos incógnitas, h y la distancia x del punto cercano a la base. Cada observación da una ecuación.'],['Despejamos la distancia en las dos',`x = h / tg ${be}°<br>x + ${dd} = h / tg ${al}°`,'Se despeja el cateto contiguo en cada triángulo.'],['Restamos las dos ecuaciones',`${dd} = h/tg ${al}° − h/tg ${be}° = h·(${f(1/tg(al))} − ${f(1/tg(be))})`,'Al restar desaparece x y queda una ecuación con solo h.'],['Despejamos h',`h = ${dd} / ${f(k)} = ${f(h)} m`,'Se divide entre el factor que multiplica a h.'],['Resultado',`<b>La torre mide ≈ ${f(h)} m</b>`,'Respuesta con su unidad.']]};
+};
+T.isosceles=function(){
+  const L=ri(6,20),hf=ri(2,L-1),bs=2*hf,al=dg(Math.acos(hf/L)),ga=180-2*al,h=Math.sqrt(L*L-hf*hf),S={a:L,b:L,c:bs},N={A:'A',B:'B',C:'C'},o={alt:1};
+  return{q:`El frontal de un tejado es un triángulo isósceles con lados iguales de ${L} m y base de ${bs} m. Calcula sus ángulos y su altura.`,fq:fig(S,{...N,a:`${L} m`,b:`${L} m`,c:`${bs} m`,gA:'?',gB:'?',gC:'?',w:'h = ?'},o),fs:fig(S,{...N,a:`${L} m`,b:`${L} m`,c:`${bs} m`,gA:`${f(al)}°`,gB:`${f(al)}°`,gC:`${f(ga)}°`,w:`h = ${f(h)}`},o),steps:[['Trazamos la altura',`La altura divide la base en dos partes de ${hf} m<br>Se forman dos triángulos rectángulos iguales`,'En un triángulo isósceles la altura sobre la base es también mediana y bisectriz.'],['Calculamos el ángulo de la base',`cos α = ${hf} / ${L} = ${f(hf/L)} → α = ${f(al)}°`,'En el triángulo rectángulo, ' + hf + ' es el cateto contiguo a α y ' + L + ' la hipotenusa.'],['Calculamos el ángulo del vértice',`γ = 180° − 2·${f(al)}° = ${f(ga)}°`,'Los dos ángulos de la base son iguales y los tres suman 180°.'],['Calculamos la altura',`h = √(${L}² − ${hf}²) = √${L*L-hf*hf} = ${f(h)} m`,'Teorema de Pitágoras en el triángulo rectángulo formado.'],['Resultado',`<b>α = β ≈ ${f(al)}°, γ ≈ ${f(ga)}°, h ≈ ${f(h)} m</b>`,'Valores redondeados a dos decimales.']]};
+};
+const ND={s:{30:'1/2',45:'√2/2',60:'√3/2'},c:{30:'√3/2',45:'√2/2',60:'1/2'}};
+const pi=(n,d)=>{const[r,s]=red(n,d),t=(r===1?'':r)+'π';return s===1?t:t+'/'+s};
+T.radianes=function(d){
+  const L=[30,45,60,90,120,135,150,180,210,225,240,270,300,315,330,360],g=L[ri(0,L.length-1)],rs=pi(g,180);
+  if(d===1)return{q:`Pasa ${g}° a radianes.`,steps:[
+    ['Recordamos la equivalencia','180° = π rad','Media vuelta mide π radianes: de ahí sale el factor de conversión.'],
+    ['Multiplicamos por π / 180',`${g}° = ${g}·π / 180 = ${g}π / 180`,'Para pasar de grados a radianes se multiplica por π / 180.'],
+    ['Simplificamos',`<b>${g}° = ${rs} rad</b>`,'Se simplifica la fracción dividiendo entre el máximo común divisor.']]};
+  if(d===2)return{q:`Pasa ${rs} rad a grados.`,steps:[
+    ['Recordamos la equivalencia','π rad = 180°','Media vuelta mide π radianes.'],
+    ['Multiplicamos por 180° / π',`(${rs})·(180° / π) = ${g}°`,'Para pasar de radianes a grados se multiplica por 180 / π. El π se cancela.'],
+    ['Resultado',`<b>${rs} rad = ${g}°</b>`,'Queda un número de grados, sin π.']]};
+  const r=ri(5,40),a=[30,45,60,90,120,135,150][ri(0,6)],[x,y]=red(a*r,180),sp=y===1?(x===1?'π':x+'π'):x+'π/'+y;
+  return{q:`Un sector circular de radio ${r} cm tiene un ángulo central de ${a}°. Calcula la longitud del arco.`,steps:[
+    ['Pasamos el ángulo a radianes',`${a}° = ${pi(a,180)} rad`,'La fórmula del arco necesita el ángulo en radianes.'],
+    ['Escribimos la fórmula','s = θ·r','Con θ en radianes, la longitud del arco es el ángulo por el radio.'],
+    ['Sustituimos',`s = (${pi(a,180)})·${r} = ${sp} cm`,'Se multiplica y se simplifica.'],
+    ['Resultado',`<b>s = ${sp} cm ≈ ${f(a*r/180*Math.PI)} cm</b>`,'Valor exacto y aproximado con π ≈ 3,1416.']]};
+};
+T.fsuma=function(){
+  const E=[['sen',45,'+',30,'√6/4 + √2/4','(√6 + √2)/4'],['cos',45,'+',30,'√6/4 − √2/4','(√6 − √2)/4'],['sen',45,'−',30,'√6/4 − √2/4','(√6 − √2)/4'],['cos',45,'−',30,'√6/4 + √2/4','(√6 + √2)/4'],['sen',60,'+',45,'√6/4 + √2/4','(√6 + √2)/4'],['cos',60,'+',45,'√2/4 − √6/4','(√2 − √6)/4']];
+  const [fn,A,op,B,pr,res]=E[ri(0,5)],pl=op==='+',C=pl?A+B:A-B,v=(fn==='sen'?sen(C):cos(C));
+  const sA=ND.s[A],cA=ND.c[A],sB=ND.s[B],cB=ND.c[B];
+  const form=fn==='sen'?`sen(A ${op} B) = sen A·cos B ${op} cos A·sen B`:`cos(A ${op} B) = cos A·cos B ${pl?'−':'+'} sen A·sen B`;
+  const sub=fn==='sen'?`(${sA})·(${cB}) ${op} (${cA})·(${sB})`:`(${cA})·(${cB}) ${pl?'−':'+'} (${sA})·(${sB})`;
+  return{q:`Calcula el valor exacto de ${fn} ${C}°.`,steps:[
+    ['Descomponemos el ángulo en ángulos conocidos',`${C}° = ${A}° ${op} ${B}°`,`${A}° y ${B}° son ángulos notables: conocemos su seno y su coseno exactos.`],
+    ['Escribimos la fórmula',form,`Es la fórmula del ${fn==='sen'?'seno':'coseno'} de una ${pl?'suma':'diferencia'} de ángulos.`],
+    ['Sustituimos los valores notables',sub,`Se usan los valores exactos de sen y cos de ${A}° y ${B}°.`],
+    ['Multiplicamos y operamos',`= ${pr}`,'Se multiplican las fracciones con raíces (√2·√3 = √6) y se suma o resta.'],
+    ['Resultado',`<b>${fn} ${C}° = ${res} ≈ ${f(v).replace('-','−')}</b>`,'La aproximación decimal permite comprobarlo con la calculadora.']]};
+};
+T.fdoble=function(){
+  const TR=[[3,4,5],[5,12,13],[8,15,17],[7,24,25]],[x,y,h]=TR[ri(0,3)],[s,c]=Math.random()<.5?[x,y]:[y,x],q2=Math.random()<.5,cs=q2?-c:c;
+  const s2=red(2*s*cs,h*h),c2=red(c*c-s*s,h*h),qd=q2?'2.º':'1.er';
+  return{q:`Sabiendo que sen α = ${s}/${h} y que α está en el ${qd} cuadrante, calcula sen 2α y cos 2α.`,steps:[
+    ['Calculamos cos α con la identidad fundamental',`cos²α = 1 − sen²α = 1 − (${s}/${h})² = ${h*h-s*s}/${h*h}<br>cos α = ${q2?'−':''}${c}/${h}`,`En el ${qd} cuadrante el coseno es ${q2?'negativo':'positivo'}, así que elegimos ese signo de la raíz.`],
+    ['Escribimos las fórmulas del ángulo doble','sen 2α = 2·sen α·cos α<br>cos 2α = cos²α − sen²α','Son las fórmulas del ángulo doble.'],
+    ['Calculamos sen 2α',`sen 2α = 2·(${s}/${h})·(${num(cs)}/${h}) = ${num(2*s*cs)}/${h*h} = ${frs(...s2)}`,'Se multiplican las fracciones y se simplifica.'],
+    ['Calculamos cos 2α',`cos 2α = (${c}/${h})² − (${s}/${h})² = ${c*c}/${h*h} − ${s*s}/${h*h} = ${frs(...c2)}`,'El signo de cos α no afecta aquí, porque está elevado al cuadrado.'],
+    ['Resultado',`<b>sen 2α = ${frs(...s2)}, cos 2α = ${frs(...c2)}</b>`,'Comprobación: sen²2α + cos²2α debe valer 1.']]};
+};
+T.fmitad=function(){
+  const E=[['cos',60,'1/2','3/2','3/4','√3/2'],['sen',60,'1/2','1/2','1/4','1/2'],['cos',90,'0','1','1/2','√2/2'],['sen',90,'0','1','1/2','√2/2'],['sen',120,'−1/2','3/2','3/4','√3/2'],['cos',120,'−1/2','1/2','1/4','1/2']];
+  const [fn,al,ca,inn,inr,res]=E[ri(0,5)],h=al/2,sg=fn==='sen'?'−':'+',cc=ca.startsWith('−')?`(${ca})`:ca;
+  return{q:`Calcula el valor exacto de ${fn} ${h}° con las fórmulas del ángulo mitad.`,steps:[
+    ['Vemos que es la mitad de un ángulo conocido',`${h}° = ${al}° / 2`,`Conocemos el coseno de ${al}°: vale ${ca}.`],
+    ['Escribimos la fórmula',`${fn}(α/2) = √((1 ${sg} cos α) / 2)`,`Es la fórmula del ángulo mitad. El signo de la raíz depende del cuadrante: ${h}° está en el 1.er cuadrante, donde sen y cos son positivos.`],
+    ['Sustituimos',`${fn} ${h}° = √((1 ${sg} ${cc}) / 2) = √((${inn}) / 2) = √(${inr})`,'Se opera dentro de la raíz.'],
+    ['Resultado',`<b>${fn} ${h}° = ${res}</b>`,'Se extrae la raíz del numerador y del denominador por separado.']]};
+};
+T.teq=function(d){
+  if(d<3){
+    const sg=Math.random()<.5?1:-1;let fn,vs,x0,xs,qs;
+    if(d===1){fn=Math.random()<.5?'sen':'cos';[vs,x0]=(fn==='sen'?[['1/2',30],['√2/2',45],['√3/2',60]]:[['1/2',60],['√2/2',45],['√3/2',30]])[ri(0,2)];
+      if(fn==='sen'){xs=sg>0?[x0,180-x0]:[180+x0,360-x0];qs=sg>0?'1.º y 2.º':'3.º y 4.º';}
+      else{xs=sg>0?[x0,360-x0]:[180-x0,180+x0];qs=sg>0?'1.º y 4.º':'2.º y 3.º';}
+    }else{fn='tg';[vs,x0]=[['√3/3',30],['1',45],['√3',60]][ri(0,2)];xs=sg>0?[x0,180+x0]:[180-x0,360-x0];qs=sg>0?'1.º y 3.º':'2.º y 4.º';}
+    const val=(sg<0?'−':'')+vs,ra=fn==='sen'?'arcsen':fn==='cos'?'arccos':'arctg',nm=fn==='sen'?'El seno':fn==='cos'?'El coseno':'La tangente';
+    const sgs={sen:['positivo en el 1.º y 2.º cuadrante','negativo en el 3.º y 4.º cuadrante'],cos:['positivo en el 1.º y 4.º cuadrante','negativo en el 2.º y 3.º cuadrante'],tg:['positiva en el 1.º y 3.º cuadrante','negativa en el 2.º y 4.º cuadrante']}[fn][sg>0?0:1];
+    return{q:`Resuelve en [0°, 360°): ${fn} x = ${val}`,steps:[
+      ['Calculamos el ángulo de referencia',`${fn} x₀ = ${vs} → x₀ = ${ra}(${vs}) = ${x0}°`,'Se resuelve primero con el valor positivo para obtener un ángulo agudo, que es el de referencia.'],
+      ['Miramos el signo para elegir los cuadrantes',`${fn} x = ${val} → cuadrantes ${qs}`,`${nm} es ${sgs}.`],
+      ['Calculamos los dos ángulos',xs.map((x,i)=>`x${['₁','₂'][i]} = ${x}°`).join('<br>'),'Con el ángulo de referencia se construye el ángulo de cada cuadrante: 180° − x₀, 180° + x₀ o 360° − x₀.'],
+      ['Resultado',`<b>x = ${xs.join('°, x = ')}°</b>`,'En general habría que sumar 360°·k (o 180°·k en la tangente), con k entero.']]};
+  }
+  const EQ=[[2,1,-1],[2,-1,-1],[2,-3,1],[2,-1,0],[2,1,0],[4,0,-1],[2,3,1]],[A,B,C]=EQ[ri(0,6)],fn=Math.random()<.5?'sen':'cos';
+  const TB=fn==='sen'?{'1':[90],'-1':[270],'0':[0,180],'1/2':[30,150],'-1/2':[210,330]}:{'1':[0],'-1':[180],'0':[90,270],'1/2':[60,300],'-1/2':[120,240]};
+  const Q=quad(A,B,C,'t'),all=[];
+  const ln=Q.sols.map(s=>{const xs=TB[s.s.replace('−','-')];all.push(...xs);return `${fn} x = ${s.s} → x = ${xs.join('° y x = ')}°`;});
+  return{q:`Resuelve en [0°, 360°): ${A}${fn}²x${B?tm(B,fn+' x'):''}${C?ss(C):''} = 0`,steps:[
+    ['Hacemos el cambio de variable',`t = ${fn} x → ${A}t²${B?tm(B,'t'):''}${C?ss(C):''} = 0`,`La ecuación es de 2.º grado en ${fn} x. Con t = ${fn} x se resuelve como cualquier ecuación de 2.º grado.`],
+    ...Q.st,
+    ['Deshacemos el cambio',ln.join('<br>'),`Para cada valor de t buscamos los ángulos con ese ${fn==='sen'?'seno':'coseno'} en una vuelta completa (t = ±1 da un solo ángulo).`],
+    ['Resultado',`<b>x = ${all.sort((a,b)=>a-b).join('°, x = ')}°</b>`,'Son todas las soluciones en [0°, 360°). Las demás se obtienen sumando 360°·k.']]};
+};
+const SUPS={'²':'2','³':'3','⁴':'4'},SUBS={'₀':'0','₁':'1','₂':'2','₃':'3'},FNS=['sen','cos','tg','arcsen','arccos','arctg','log'];
+const LTR=/^[A-Za-zÁ-ÖØ-öø-ÿα-ωΑ-Ω]+/,isL=c=>/[A-Za-zÁ-ÖØ-öø-ÿα-ωΑ-Ω]/.test(c);
+const isF=c=>!!c&&(/[0-9(√]/.test(c)||isL(c));
+const leaf=t=>/^[0-9]/.test(t)?`<mn>${t}</mn>`:t.length>3?`<mtext>${t}</mtext>`:[...t].map(q=>`<mi>${q}</mi>`).join('');
+function grp(s,i){let d=0;for(let j=i;j<s.length;j++){if(s[j]==='(')d++;else if(s[j]===')'&&!--d)return j}return -1}
+function fac(s,i){
+  const c=s[i];
+  if(c==='('){const j=grp(s,i);if(j<0)return null;const g=s.slice(i+1,j);let h=`<mo>(</mo>${mex(g)}<mo>)</mo>`,e=j+1,sp=SUPS[s[e]];
+    if(sp){h=`<msup><mrow>${h}</mrow><mn>${sp}</mn></msup>`;e++}
+    return{m:h,e,r:/[/√]/.test(g)?1:0,g:sp?undefined:g};}
+  if(c==='√'){const e0=i+1;
+    if(s[e0]==='('){const j=grp(s,e0);if(j<0)return null;return{m:`<msqrt>${mex(s.slice(e0+1,j))}</msqrt>`,e:j+1,r:1};}
+    const m=s.slice(e0).match(/^([0-9]+(,[0-9]+)?|[A-Za-zα-ω]+)/);if(!m)return null;
+    return{m:`<msqrt>${leaf(m[0])}</msqrt>`,e:e0+m[0].length,r:1};}
+  if(/[0-9]/.test(c)){const m=s.slice(i).match(/^[0-9]+(,[0-9]+)?/);let e=i+m[0].length,h=leaf(m[0]);if(s[e]==='°'){h+='<mo>°</mo>';e++}return{m:h,e,r:0};}
+  const m=s.slice(i).match(LTR);if(!m)return null;
+  const nm=m[0];let e=i+nm.length,h=FNS.includes(nm)?`<mi>${nm}</mi>`:leaf(nm),r=0;
+  if(SUBS[s[e]]){h=`<msub>${h}<mn>${SUBS[s[e]]}</mn></msub>`;e++}
+  else if(SUPS[s[e]]){h=`<msup>${h}<mn>${SUPS[s[e]]}</mn></msup>`;e++}
+  if(FNS.includes(nm)&&s[e]===' '&&isF(s[e+1])){const a=fac(s,e+1);if(a){h+=`<mspace width='0.2em'></mspace>`+a.m;e=a.e;r=a.r}}
+  return{m:h,e,r};
+}
+function term(s,i){
+  let m='',e=i,r=0,n=0,g;
+  for(;;){
+    const f=isF(s[e])?fac(s,e):null;if(!f)break;
+    m+=f.m;r=r||f.r;e=f.e;n++;g=n===1?f.g:undefined;
+    if(s[e]==='·'&&isF(s[e+1])){m+='<mo>·</mo>';e++;g=undefined;n++;}
+  }
+  return n?{m,e,r,g}:null;
+}
+function frac(s,i){
+  const a=term(s,i);if(!a)return null;
+  let j=a.e;while(s[j]===' ')j++;
+  if(s[j]!=='/')return null;
+  j++;while(s[j]===' ')j++;
+  const b=term(s,j);if(!b)return null;
+  return{m:`<mfrac><mrow>${a.g!==undefined?mex(a.g):a.m}</mrow><mrow>${b.g!==undefined?mex(b.g):b.m}</mrow></mfrac>`,e:b.e};
+}
+function mex(s){
+  let o='',i=0;
+  while(i<s.length){
+    const c=s[i];if(c===' '){i++;continue}
+    const fr=isF(c)?frac(s,i):null;if(fr){o+=fr.m;i=fr.e;continue}
+    const t=isF(c)?term(s,i):null;if(t){o+=t.m;i=t.e;continue}
+    o+=`<mo>${c}</mo>`;i++;
+  }
+  return o;
+}
+function tx(s){
+  let o='',i=0;
+  while(i<s.length){
+    const c=s[i],fr=isF(c)?frac(s,i):null;
+    if(fr){o+=`<math>${fr.m}</math>`;i=fr.e;continue}
+    const t=isF(c)?term(s,i):null;
+    if(t){o+=t.r?`<math>${t.m}</math>`:s.slice(i,t.e);i=t.e;continue}
+    o+=c;i++;
+  }
+  return o;
+}
+const mx=h=>{let pre=0;return h.split(/(<[^>]*>)/).map(p=>{if(p[0]==='<'){if(/^<pre/.test(p))pre=1;else if(/^<\/pre/.test(p))pre=0;return p}return pre?p:tx(p)}).join('')};
+const rp=(t,o)=>Object.keys(o).reduce((s,k)=>s.split('{'+k+'}').join(o[k]),t);
+const SC={
+1:[
+['Desde un punto situado a {D} m de la base de un edificio se ve su azotea con un ángulo de elevación de {A}°.{E} ¿Qué altura tiene el edificio?',['Obs.','Base','Azotea'],'El edificio mide',10,80,1],
+['Un excursionista se coloca a {D} m de un árbol y ve su copa con un ángulo de elevación de {A}°.{E} ¿Qué altura tiene el árbol?',['Obs.','Base','Copa'],'El árbol mide',5,30,1],
+['Una torre de telecomunicaciones se ve con un ángulo de elevación de {A}° desde un punto situado a {D} m de su base. ¿Qué altura tiene la torre?',['Obs.','Base','Cima'],'La torre mide',20,100,0],
+['Desde un punto a {D} m de la base de una chimenea industrial se ve su extremo superior con un ángulo de {A}° sobre la horizontal. ¿Qué altura tiene la chimenea?',['Obs.','Base','Extremo'],'La chimenea mide',20,90,0],
+['Desde la playa, a {D} m del pie de un acantilado, se ve su borde superior con un ángulo de elevación de {A}°. ¿Qué altura tiene el acantilado?',['Playa','Pie','Borde'],'El acantilado mide',30,120,0],
+['Un fotógrafo está a {D} m de un campanario y apunta a su veleta con un ángulo de elevación de {A}°.{E} ¿Qué altura tiene el campanario?',['Foto.','Base','Veleta'],'El campanario mide',10,60,1]],
+2:[
+['Una rampa de acceso de {L} m de longitud forma un ángulo de {A}° con el suelo. ¿Qué altura salva la rampa?',['Inicio','Base','Final'],'La rampa salva',3,12,5,20],
+['Un niño sujeta una cometa con {L} m de cuerda tensa que forma {A}° con el suelo. ¿A qué altura vuela la cometa?',['Niño','Suelo','Cometa'],'La cometa vuela a',20,80,30,70],
+['Un avión despega y recorre {L} m en línea recta con un ángulo de ascenso de {A}°. ¿Qué altura ha alcanzado?',['Pista','Suelo','Avión'],'El avión ha alcanzado',500,3000,5,25],
+['Un teleférico recorre un cable de {L} m inclinado {A}° respecto a la horizontal. ¿Qué desnivel salva?',['Salida','Base','Llegada'],'El desnivel es de',300,1500,15,40],
+['Un cable tensor de {L} m sujeta una antena y forma {A}° con el suelo. ¿A qué altura de la antena está sujeto?',['Anclaje','Pie','Sujeción'],'Está sujeto a',10,40,40,70],
+['Un tobogán de {L} m de longitud forma {A}° con el suelo. ¿Qué altura tiene su punto más alto?',['Salida','Base','Parte alta'],'El tobogán mide',3,6,25,45]],
+3:[
+['Desde lo alto de un faro de {H} m se ve un barco con un ángulo de depresión de {A}°. ¿A qué distancia del pie del faro está el barco?',['Barco','Pie','Faro'],'El barco está a',20,80,5,30],
+['Un dron vuela a {H} m de altura y ve un coche con un ángulo de depresión de {A}°. ¿A qué distancia horizontal está el coche?',['Coche','Suelo','Dron'],'El coche está a',30,120,20,60],
+['Una avioneta vuela a {H} m de altura y ve el inicio de la pista con un ángulo de depresión de {A}°. ¿A qué distancia horizontal está la pista?',['Pista','Suelo','Avioneta'],'La pista está a',300,1500,5,20],
+['Un vigía situado en una torre de {H} m ve un incendio con un ángulo de depresión de {A}°. ¿A qué distancia de la torre está el incendio?',['Incendio','Pie','Torre'],'El incendio está a',15,60,8,30]],
+4:[
+['Para medir la anchura de un río se marcan dos puntos A y B en una orilla, a {C} m uno de otro. Desde ellos se ve un árbol de la orilla opuesta bajo ángulos de {A}° (en A) y {B}° (en B). ¿Qué anchura tiene el río?',['A','B','Árbol'],'w','El río mide',30,120],
+['Dos observadores, A y B, están en una costa recta a {C} m de distancia. Ven un barco bajo ángulos de {A}° (en A) y {B}° (en B) respecto a la línea de costa. ¿A qué distancia de la costa está el barco?',['A','B','Barco'],'w','El barco está a',100,500],
+['Dos torres de vigilancia, A y B, distan {C} m. Desde ellas se ve un incendio bajo ángulos de {A}° (en A) y {B}° (en B) respecto a la línea que las une. ¿A qué distancia de la torre A está el incendio?',['Torre A','Torre B','Incendio'],'b','El incendio está a',500,2000],
+['Dos senderistas, A y B, están a {C} m uno de otro y ven una cabaña bajo ángulos de {A}° (en A) y {B}° (en B) respecto al camino que los une. ¿A qué distancia de A está la cabaña?',['A','B','Cabaña'],'b','La cabaña está a',200,800]],
+5:[
+['Desde un faro se ven dos barcos: B1 a {C} m y B2 a {B} m, y las dos visuales forman {A}°. ¿Qué distancia hay entre los barcos?',['Faro','B1','B2'],'Los barcos están a',200,900,35,110,'m'],
+['Dos excursionistas salen de un campamento por caminos rectos que forman {A}°. Uno ha recorrido {C} m y el otro {B} m. ¿A qué distancia en línea recta están?',['Camp.','Exc. 1','Exc. 2'],'Están a',300,2000,30,120,'m'],
+['Para abrir un túnel recto entre dos puntos A y B de una montaña, se miden desde un punto exterior P las distancias PA = {C} m y PB = {B} m, y el ángulo APB = {A}°. ¿Qué longitud tendrá el túnel?',['P','A','B'],'El túnel mide',200,900,40,120,'m'],
+['Para conocer la longitud de un lago, se miden desde un punto P las distancias a sus extremos, {C} m y {B} m, que forman un ángulo de {A}°. ¿Cuánto mide el lago?',['P','Ext. 1','Ext. 2'],'El lago mide',100,600,40,120,'m'],
+['Desde una torre de control se detectan dos aviones a {C} km y {B} km, con {A}° entre las dos direcciones. ¿Qué distancia hay entre los aviones?',['Torre','Avión 1','Avión 2'],'Los aviones están a',5,40,30,120,'km'],
+['Desde un barco se ven dos islas a {C} km y {B} km, bajo un ángulo de {A}°. ¿Qué distancia separa las islas?',['Barco','Isla 1','Isla 2'],'Las islas están separadas',4,30,30,120,'km']]
+};
+T.real=function(d){
+  const ks=d===1?[1,2,3]:d===2?[1,3,5]:[4,5],k=ks[ri(0,ks.length-1)],ls=SC[k],sc=ls[ri(0,ls.length-1)],o={right:'B'};
+  if(k===1){
+    const [tt,N,ans,lo,hi,ey]=sc,D=ri(lo,hi),A=ri(20,65),eye=d===2&&ey,h=D*tg(A),tot=h+(eye?1.6:0),S={a:h,b:D/cos(A),c:D},n={A:N[0],B:N[1],C:N[2]};
+    const st=[['Interpretamos el dibujo',`Cateto contiguo = ${D} m<br>Ángulo = ${A}°<br>Cateto opuesto = h`,'Los datos forman un triángulo rectángulo. Un esquema con los datos ayuda a elegir la razón.'],['Elegimos la razón trigonométrica',`tg ${A}° = opuesto / contiguo = h / ${D}`,'Conocemos el cateto contiguo y buscamos el opuesto: los relaciona la tangente.'],['Despejamos h',`h = ${D}·tg ${A}° = ${f(h)} m`,'Multiplicamos por el cateto contiguo.']];
+    if(eye)st.push(['Sumamos la altura de los ojos',`${f(h)} + 1,6 = ${f(tot)} m`,'La visual parte de los ojos del observador, no del suelo.']);
+    st.push(['Resultado',`<b>${ans} ≈ ${f(tot)} m</b>`,'Respuesta con su unidad y redondeada a dos decimales.']);
+    return{q:rp(tt,{D,A,E:eye?' Los ojos del observador están a 1,6 m del suelo.':''}),fq:fig(S,{...n,a:'h = ?',b:'',c:`${D} m`,gA:`${A}°`},o),fs:fig(S,{...n,a:`h = ${f(h)} m`,b:'',c:`${D} m`,gA:`${A}°`},o),steps:st};
+  }
+  if(k===2){
+    const [tt,N,ans,lo,hi,a0,a1]=sc,L=ri(lo,hi),A=ri(a0,a1),h=L*sen(A),S={a:h,b:L,c:L*cos(A)},n={A:N[0],B:N[1],C:N[2]};
+    return{q:rp(tt,{L,A}),fq:fig(S,{...n,a:'h = ?',b:`${L} m`,c:'',gA:`${A}°`},o),fs:fig(S,{...n,a:`h = ${f(h)} m`,b:`${L} m`,c:'',gA:`${A}°`},o),steps:[['Interpretamos el dibujo',`Hipotenusa = ${L} m<br>Ángulo = ${A}°<br>Cateto opuesto = h`,'Los datos forman un triángulo rectángulo. Un esquema con los datos ayuda a elegir la razón.'],['Elegimos la razón trigonométrica',`sen ${A}° = opuesto / hipotenusa = h / ${L}`,'Conocemos la hipotenusa y buscamos el cateto opuesto: los relaciona el seno.'],['Despejamos h',`h = ${L}·sen ${A}° = ${f(h)} m`,'Multiplicamos por la hipotenusa.'],['Resultado',`<b>${ans} ≈ ${f(h)} m</b>`,'Respuesta con su unidad y redondeada a dos decimales.']]};
+  }
+  if(k===3){
+    const [tt,N,ans,lo,hi,a0,a1]=sc,H=ri(lo,hi),A=ri(a0,a1),dd=H/tg(A),S={a:H,b:H/sen(A),c:dd},n={A:N[0],B:N[1],C:N[2]};
+    return{q:rp(tt,{H,A}),fq:fig(S,{...n,a:`${H} m`,b:'',c:'d = ?',gA:`${A}°`},o),fs:fig(S,{...n,a:`${H} m`,b:'',c:`d = ${f(dd)} m`,gA:`${A}°`},o),steps:[['Interpretamos el dibujo',`Altura (cateto opuesto) = ${H} m<br>Ángulo de depresión = ${A}°<br>Distancia horizontal (cateto contiguo) = d`,'El ángulo de depresión desde arriba es igual al de elevación desde abajo (ángulos alternos internos), por eso se sitúa en el vértice inferior.'],['Elegimos la razón trigonométrica',`tg ${A}° = ${H} / d`,'Conocemos el cateto opuesto y buscamos el contiguo: los relaciona la tangente.'],['Despejamos d',`d = ${H} / tg ${A}° = ${f(dd)} m`,'Al despejar, la tangente pasa dividiendo.'],['Resultado',`<b>${ans} ≈ ${f(dd)} m</b>`,'Respuesta con su unidad y redondeada a dos decimales.']]};
+  }
+  if(k===4){
+    const [tt,N,fl,ans,lo,hi]=sc,c=ri(lo,hi),A=ri(40,75),B=ri(40,75),C=180-A-B,b=c*sen(B)/sen(C),a=c*sen(A)/sen(C),w=b*sen(A),S={a,b,c},n={A:N[0],B:N[1],C:N[2]},ow=fl==='w'?{alt:1}:{};
+    const L0={...n,a:'',b:fl==='b'?'x = ?':'',c:`${c} m`,gA:`${A}°`,gB:`${B}°`,w:fl==='w'?'w = ?':''};
+    const L1={...n,a:'',b:fl==='b'?`x = ${f(b)} m`:'',c:`${c} m`,gA:`${A}°`,gB:`${B}°`,gC:`${C}°`,w:fl==='w'?`w = ${f(w)} m`:''};
+    const st=[['Calculamos el ángulo del tercer vértice',`C = 180° − ${A}° − ${B}° = ${C}°`,'Los tres ángulos del triángulo suman 180°. Conocemos un lado y dos ángulos: se usa el teorema del seno.'],['Aplicamos el teorema del seno',`b / sen B = c / sen C → b = ${c}·sen ${B}° / sen ${C}° = ${f(b)} m`,'El lado b (de A al objeto) es opuesto a B, y c es opuesto a C.']];
+    if(fl==='w')st.push(['Calculamos la distancia perpendicular w',`sen ${A}° = w / b → w = ${f(b)}·sen ${A}° = ${f(w)} m`,'En el triángulo rectángulo que forma la perpendicular, w es el cateto opuesto a A.']);
+    st.push(['Resultado',`<b>${ans} ≈ ${f(fl==='w'?w:b)} m</b>`,'Respuesta con su unidad y redondeada a dos decimales.']);
+    return{q:rp(tt,{C:c,A,B}),fq:fig(S,L0,ow),fs:fig(S,L1,ow),steps:st};
+  }
+  const [tt,N,ans,lo,hi,a0,a1,u]=sc,b=ri(lo,hi),c=ri(lo,hi),A=ri(a0,a1),a=Math.sqrt(b*b+c*c-2*b*c*cos(A)),B=dg(Math.acos((a*a+c*c-b*b)/(2*a*c))),S={a,b,c},n={A:N[0],B:N[1],C:N[2]};
+  const L0={...n,a:'d = ?',b:`${b} ${u}`,c:`${c} ${u}`,gA:`${A}°`,gB:d===3?'?':''},L1={...n,a:`d = ${f(a)} ${u}`,b:`${b} ${u}`,c:`${c} ${u}`,gA:`${A}°`,gB:d===3?`${f(B)}°`:''};
+  const st=[['Interpretamos el dibujo',`Dos lados conocidos: ${c} ${u} y ${b} ${u}<br>Ángulo entre ellos: ${A}°`,'No hay ángulo recto, pero conocemos dos lados y el ángulo que forman: se usa el teorema del coseno.'],['Aplicamos el teorema del coseno',`d² = ${b}² + ${c}² − 2·${b}·${c}·cos ${A}° = ${f(a*a)}`,'El lado opuesto al ángulo conocido es la distancia buscada.'],['Calculamos la raíz',`d = √${f(a*a)} = ${f(a)} ${u}`,'La distancia es la raíz positiva.']];
+  if(d===3)st.push(['Calculamos el ángulo pedido',`cos B = (d² + c² − b²) / (2dc) = ${f((a*a+c*c-b*b)/(2*a*c))} → B = ${f(B)}°`,'Se despeja cos B del teorema del coseno y se usa la función inversa.']);
+  st.push(['Resultado',`<b>${ans} ≈ ${f(a)} ${u}${d===3?`; el ángulo en ${N[1]} mide ≈ ${f(B)}°`:''}</b>`,'Respuesta con sus unidades y redondeada a dos decimales.']);
+  return{q:rp(tt,{C:c,B:b,A})+(d===3?` Calcula también el ángulo en ${N[1]}.`:''),fq:fig(S,L0),fs:fig(S,L1),steps:st};
+};
+const eq3=r=>{let s='';[0,1,2].forEach(j=>{const c=r[j];if(!c)return;const a=Math.abs(c),t=(a===1?'':a)+'xyz'[j];s+=s?(c<0?' − ':' + ')+t:(c<0?'−':'')+t;});return s+' = '+num(r[3])};
+const okM=M=>{const D=M[0][0]*(M[1][1]*M[2][2]-M[1][2]*M[2][1])-M[0][1]*(M[1][0]*M[2][2]-M[1][2]*M[2][0])+M[0][2]*(M[1][0]*M[2][1]-M[1][1]*M[2][0]);return D&&M[0][0]&&M[0][0]*M[1][1]-M[1][0]*M[0][1]};
+const dbl=(k,b)=>k===1?b:k===4?'cuatro veces '+b:(k===2?'el doble ':'el triple ')+(b.startsWith('el ')?'del '+b.slice(3):'de '+b);
+const cap=s=>s[0].toUpperCase()+s.slice(1);
+function lin(s,B,u){
+  const [i,j,l]=[0,1,2].sort(()=>Math.random()-.5),a=ri(1,3),b=ri(1,3),c=ri(1,3),n=a*s[i]+b*s[j]-c*s[l],row=[0,0,0,n];
+  row[i]=a;row[j]=b;row[l]=-c;
+  const L=`${dbl(a,B[i])} más ${dbl(b,B[j])}`,R=dbl(c,B[l]);
+  const al=t=>t.startsWith('el ')?'al '+t.slice(3):'a '+t;
+  return[cap(n>0?`${L} excede en ${n} ${u} ${al(R)}.`:n<0?`${R} excede en ${-n} ${u} ${al(L)}.`:`${L} es igual ${al(R)}.`),row];
+}
+function mk(F){
+  const G=gs(F.rows.map(r=>r[1]));
+  return{q:F.q||F.rows.map(r=>r[0]).join(' ')+' '+F.ask,steps:[
+    ['Definimos las incógnitas',F.nm.map((n,i)=>'xyz'[i]+' = '+n).join('<br>'),'Cada cantidad que nos piden es una incógnita. Hay tres incógnitas, así que necesitamos tres ecuaciones.'],
+    ['Traducimos cada frase a una ecuación',F.rows.map(r=>`${r[0]}<br>→ ${r[2]?r[2]+'<br>→ simplificando: ':''}${eq3(r[1])}`).join('<br><br>'),'Cada condición del enunciado se convierte en una ecuación. Expresiones como el doble de, excede en o un 20 % más indican qué operación escribir.'],
+    ...G.st,['Resultado',`<b>${F.ans(G.sol)}</b>`,'Se interpreta la solución en el contexto y se comprueba que tiene sentido: valores positivos y enteros.']]};
+}
+const CA=[
+['En una reunión hay {N} personas, entre hombres, mujeres y niños.',['hombres','mujeres','niños'],'personas','¿Cuántos hombres, mujeres y niños hay?'],
+['En una residencia se compran semanalmente {N} helados de vainilla, chocolate y nata.',['helados de vainilla','helados de chocolate','helados de nata'],'helados','¿Cuántos helados de cada sabor se compran?'],
+['En una ciudad del litoral existen {N} hoteles de 2, 3 y 4 estrellas.',['hoteles de 2 estrellas','hoteles de 3 estrellas','hoteles de 4 estrellas'],'hoteles','¿Cuántos hoteles hay de cada categoría?'],
+['En una competición deportiva participaron {N} atletas de tres categorías: infantiles, cadetes y juveniles.',['atletas infantiles','atletas cadetes','atletas juveniles'],'atletas','¿Cuántos atletas hubo en cada categoría?'],
+['En un taller de percusión participan {N} alumnos en tres modalidades: merengue, tango y samba.',['alumnos de merengue','alumnos de tango','alumnos de samba'],'alumnos','¿Cuántos alumnos hay en cada modalidad?'],
+['Un grupo de {N} alumnos cursa tres optativas: francés, cultura clásica y energías alternativas.',['alumnos de francés','alumnos de cultura clásica','alumnos de energías alternativas'],'alumnos','¿Cuántos alumnos hay en cada asignatura?'],
+['Un videoclub tiene {N} películas de tres tipos: infantiles, del oeste y de terror.',['películas infantiles','películas del oeste','películas de terror'],'películas','¿Cuántas películas hay de cada tipo?'],
+['Una fábrica dispone de {N} cajas de tres tamaños: grandes, medianas y pequeñas.',['cajas grandes','cajas medianas','cajas pequeñas'],'cajas','¿Cuántas cajas hay de cada tamaño?'],
+['En una votación para elegir destino de excursión se emiten {N} votos entre Baleares, Canarias y París.',['votos a Baleares','votos a Canarias','votos a París'],'votos','¿Cuántos votos obtuvo cada destino?'],
+['En primero de bachillerato hay {N} alumnos repartidos en tres grupos: A, B y C.',['alumnos del grupo A','alumnos del grupo B','alumnos del grupo C'],'alumnos','¿Cuántos alumnos hay en cada grupo?']];
+const fA=d=>{
+  const c=CA[ri(0,CA.length-1)],lo=d===1?3:d===2?5:10,hi=d===1?12:d===2?25:50;
+  for(;;){
+    const s=[ri(lo,hi),ri(lo,hi),ri(lo,hi)],N=s[0]+s[1]+s[2],B=c[1].map(n=>`el número de ${n}`),rows=[[c[0].replace('{N}',N),[1,1,1,N]],lin(s,B,c[2]),lin(s,B,c[2])];
+    if(okM(rows.map(r=>r[1])))return{rows,nm:c[1].map(n=>`número de ${n}`),ask:c[3],ans:sl=>c[1].map((n,i)=>`${n}: ${sl[i]}`).join('; ')};
+  }
+};
+const CB=[['En una frutería',[['kg de naranjas','precio de 1 kg de naranjas'],['kg de plátanos','precio de 1 kg de plátanos'],['kg de mangos','precio de 1 kg de mangos']]],
+['En una tienda de deportes',[['pares de zapatillas','precio de un par de zapatillas'],['sudaderas','precio de una sudadera'],['pantalones','precio de un pantalón']]],
+['En una papelería',[['lápices','precio de un lápiz'],['sacapuntas','precio de un sacapuntas'],['gomas de borrar','precio de una goma de borrar']]],
+['En una cafetería',[['cafés','precio de un café'],['tostadas','precio de una tostada'],['zumos','precio de un zumo']]],
+['En una tienda de informática',[['pen drives de 1 GB','precio de un pen drive de 1 GB'],['pen drives de 2 GB','precio de un pen drive de 2 GB'],['pen drives de 4 GB','precio de un pen drive de 4 GB']]]];
+const fB=d=>{
+  const c=CB[ri(0,4)],it=c[1],pm=d===3?12:8;
+  for(;;){
+    const p=[ri(1,pm),ri(1,pm),ri(1,pm)],Q=[0,1,2].map(()=>[ri(0,4),ri(0,4),ri(0,4)]);
+    if(Q.some(q=>q.filter(x=>x).length<2))continue;
+    const rows=Q.map((q,i)=>{const T=q[0]*p[0]+q[1]*p[1]+q[2]*p[2],tx=[0,1,2].filter(j=>q[j]).map(j=>`${q[j]} ${q[j]===1?it[j][1].replace(/^precio de (un |una |1 )/,''):it[j][0]}`),ls=tx.length>2?`${tx[0]}, ${tx[1]} y ${tx[2]}`:tx.join(' y ');return[`${i?'La '+['','segunda','tercera'][i]:c[0]+', la primera'} compra (${ls}) cuesta ${T} €.`,[q[0],q[1],q[2],T]]});
+    if(okM(rows.map(r=>r[1])))return{rows,nm:it.map(x=>x[1]),ask:'Calcula el precio de cada artículo.',ans:sl=>it.map((x,i)=>`${x[1]}: ${sl[i]} €`).join('; ')};
+  }
+};
+const CC=[['billetes',[10,20,50],'eur'],['billetes',[5,10,20],'eur'],['monedas',[100,50,20],'cent'],['monedas',[50,20,10],'cent'],['monedas',[5,10,50],'cent'],['monedas',[1,2,5],'cent']];
+const fC=d=>{
+  const c=CC[ri(0,5)],v=c[1],hi=d===1?6:d===2?12:20,lab=x=>c[2]==='eur'?`${x} euros`:x===100?'1 euro':x===1?'1 céntimo':`${x} céntimos`;
+  for(;;){
+    const s=[ri(1,hi),ri(1,hi),ri(1,hi)],N=s[0]+s[1]+s[2],V=v[0]*s[0]+v[1]*s[1]+v[2]*s[2],g=gcd(gcd(v[0],v[1]),gcd(v[2],V)),B=v.map(x=>`el número de ${c[0]} de ${lab(x)}`);
+    const rows=[[`En una caja hay ${N} ${c[0]} de tres clases: ${lab(v[0])}, ${lab(v[1])} y ${lab(v[2])}.`,[1,1,1,N]],[`Su valor total es ${c[2]==='eur'?V:f(V/100)} €.`,[v[0]/g,v[1]/g,v[2]/g,V/g],(c[2]==='cent'?'en céntimos: ':'')+eq3([v[0],v[1],v[2],V])],lin(s,B,c[0])];
+    if(okM(rows.map(r=>r[1])))return{rows,nm:v.map(x=>`número de ${c[0]} de ${lab(x)}`),ask:`¿Cuánt${c[0]==='monedas'?'as':'os'} ${c[0]} hay de cada clase?`,ans:sl=>v.map((x,i)=>`${lab(x)}: ${sl[i]}`).join('; ')};
+  }
+};
+const CD=[
+['lingote de tipo','g',['A','B','C'],10,'Hay tres tipos de lingotes. Cada lingote contiene (en gramos de metal):','Se quiere formar una aleación con','¿Cuántos lingotes de cada tipo hay que usar?','lingotes de tipo '],
+['mueble','unidades',['madera','plástico','aluminio'],1,'Una compañía fabrica sillas, mecedoras y sofás. Cada mueble necesita estas unidades de material:','La compañía ha gastado exactamente sus existencias:','¿Cuántas sillas, mecedoras y sofás fabricó?','']];
+const fD=d=>{
+  const k=ri(0,1),c=CD[k],hi=d===2?6:8,nmS=k?['silla','mecedora','sofá']:['1','2','3'],pl=k?['sillas','mecedoras','sofás']:['lingotes de tipo 1','lingotes de tipo 2','lingotes de tipo 3'];
+  for(;;){
+    const C=[0,1,2].map(()=>[0,1,2].map(()=>ri(1,6)*c[3])),s=[ri(1,hi),ri(1,hi),ri(1,hi)],T=[0,1,2].map(j=>C[0][j]*s[0]+C[1][j]*s[1]+C[2][j]*s[2]);
+    const rows=[0,1,2].map(j=>[`Total de ${c[2][j]}: ${T[j]} ${c[1]}.`,[C[0][j],C[1][j],C[2][j],T[j]]]);
+    if(!okM(rows.map(r=>r[1])))continue;
+    const desc=C.map((r,i)=>`${k?'Una '+nmS[i]:'Tipo '+nmS[i]}: ${r[0]} ${c[1]===  'g'?'g de ':'de '}${c[2][0]}, ${r[1]} ${c[1]==='g'?'g de ':'de '}${c[2][1]} y ${r[2]} ${c[1]==='g'?'g de ':'de '}${c[2][2]}.`).join(' ');
+    return{q:`${c[4]} ${desc} ${c[5]} ${T[0]} ${c[1]==='g'?'g':'unidades'} de ${c[2][0]}, ${T[1]} de ${c[2][1]} y ${T[2]} de ${c[2][2]}. ${c[6]}`,rows,nm:pl.map(x=>'cantidad de '+x),ask:'',ans:sl=>pl.map((x,i)=>`${x}: ${sl[i]}`).join('; ')};
+  }
+};
+const CE=[
+['Un almacén vende un producto envasado en cajas de tres marcas.',['cajas de la marca A','cajas de la marca B','cajas de la marca C'],[250,500,1000],1000,'kg','peso'],
+['Una ferretería vende listones de tres longitudes.',['listones de 0,90 m','listones de 1,50 m','listones de 2,40 m'],[90,150,240],100,'m','longitud'],
+['Una tienda dispone de latas de tomate de tres fabricantes.',['latas del fabricante A','latas del fabricante B','latas del fabricante C'],[250,500,1000],1000,'kg','peso'],
+['Una obra compra sacos de cemento de tres tamaños.',['sacos de 5 kg','sacos de 10 kg','sacos de 25 kg'],[5,10,25],1,'kg','peso']];
+const fE=d=>{
+  const c=CE[ri(0,3)],w=c[2],hi=d===1?6:10;
+  for(;;){
+    const s=[ri(1,hi),ri(1,hi),ri(1,hi)],p=[ri(1,3),ri(3,6),ri(6,10)],N=s[0]+s[1]+s[2],W=w[0]*s[0]+w[1]*s[1]+w[2]*s[2],P=p[0]*s[0]+p[1]*s[1]+p[2]*s[2],g=gcd(gcd(w[0],w[1]),gcd(w[2],W));
+    const rows=[[`${c[0]} Se compran ${N} unidades en total.`,[1,1,1,N]],[`El ${c[5]} total es ${f(W/c[3])} ${c[4]}.`,[w[0]/g,w[1]/g,w[2]/g,W/g],g>1||c[3]>1?eq3([w[0],w[1],w[2],W]):undefined],[`Cada unidad cuesta ${p[0]}, ${p[1]} y ${p[2]} € respectivamente y el total pagado es ${P} €.`,[p[0],p[1],p[2],P]]];
+    if(okM(rows.map(r=>r[1])))return{rows,nm:c[1].map(x=>'número de '+x),ask:'¿Cuántas unidades se han comprado de cada tipo?',ans:sl=>c[1].map((x,i)=>`${x}: ${sl[i]}`).join('; ')};
+  }
+};
+const fF=d=>{
+  const w=[100,10,1],nmz=['cifra de las centenas','cifra de las decenas','cifra de las unidades'],ps=[[0,2,'unidades y centenas'],[1,2,'unidades y decenas'],[0,1,'decenas y centenas']];
+  for(;;){
+    const s=[ri(1,9),ri(0,9),ri(0,9)],S=s[0]+s[1]+s[2],cand=[];
+    ps.forEach(([i,j,t])=>{if(s[i]===s[j])return;const c=w[i]-w[j],D=c*(s[j]-s[i]),row=[0,0,0,D/Math.abs(c)];row[i]=-c/Math.abs(c);row[j]=c/Math.abs(c);const ex=sw=>w.map((wp,q)=>(wp===1?'':wp)+'xyz'[sw?(q===i?j:q===j?i:q):q]).join(' + ');cand.push([`Si se intercambian las cifras de las ${t}, el número ${D>0?'aumenta':'disminuye'} en ${Math.abs(D)} unidades.`,row,`(${ex(1)}) − (${ex(0)}) = ${D}`]);});
+    if(2*s[1]===s[0]+s[2])cand.push(['La cifra de las decenas es la media aritmética de las otras dos.',[1,-2,1,0],'y = (x + z) / 2']);
+    if(s[2]===s[0]+s[1])cand.push(['La cifra de las unidades es la suma de las otras dos.',[1,1,-1,0]]);
+    if(cand.length<2)continue;
+    cand.sort(()=>Math.random()-.5);
+    const rows=[[`He pensado un número de tres cifras cuyas cifras suman ${S}.`,[1,1,1,S]],cand[0],cand[1]];
+    if(okM(rows.map(r=>r[1])))return{rows,nm:nmz,ask:'¿Qué número es?',ans:sl=>`El número es ${100*sl[0]+10*sl[1]+sl[2]}`};
+  }
+};
+const CG=[['el abuelo','el hijo','el nieto',[60,80],[30,50],[5,15]],['Ana','Jesús','Fernando',[12,25],[12,25],[12,25]],['Juan','Pedro','Luis',[38,50],[10,20],[6,18]]];
+const fG=d=>{
+  const c=CG[ri(0,2)];
+  for(;;){
+    const s=[ri(...c[3]),ri(...c[4]),ri(...c[5])],S=s[0]+s[1]+s[2],B=[0,1,2].map(i=>`la edad de ${c[i]}`);
+    const [i,j]=[0,1,2].sort(()=>Math.random()-.5),k=ri(2,3),t=[5,10][ri(0,1)],fut=s[i]<=t||s[j]<=t||Math.random()<.5,n=fut?s[i]+t-k*(s[j]+t):s[i]-t-k*(s[j]-t),row=[0,0,0,fut?n+t*(k-1):n-t*(k-1)];
+    row[i]=1;row[j]=-k;
+    const sh=cap(`${fut?'dentro de':'hace'} ${t} años, ${B[i]} ${fut?'será':'era'} ${dbl(k,B[j])}${n>0?` más ${n} años`:n<0?` menos ${-n} años`:''}.`);
+    const rows=[[`Las edades de ${c[0]}, ${c[1]} y ${c[2]} suman ${S} años.`,[1,1,1,S]],[sh,row],lin(s,B,'años')];
+    if(okM(rows.map(r=>r[1])))return{rows,nm:[0,1,2].map(q=>'edad de '+c[q]),ask:'Calcula la edad de cada uno.',ans:sl=>[0,1,2].map(q=>`${c[q]}: ${sl[q]} años`).join('; ')};
+  }
+};
+const fH=d=>{
+  const k=ri(0,2);
+  for(;;){
+    if(k===0){
+      const y=500*ri(1,6),z=500*ri(1,6),x=2*(y+z),T=x+y+z,r=[[4,5,-2],[3,6,-1],[5,2,-3]][ri(0,2)],G=(r[0]*x+r[1]*y+r[2]*z)/100,vv=q=>q>0?`se han revalorizado un ${q} %`:`han perdido un ${-q} %`;
+      const rows=[[`Una persona invierte ${T} € en acciones de tres empresas, A, B y C.`,[1,1,1,T]],['Invierte en A el doble que en B y C juntas.',[1,-2,-2,0]],[`Al cabo de un año, las acciones de A ${vv(r[0])}, las de B ${vv(r[1])} y las de C ${vv(r[2])}, con un beneficio total de ${G} €.`,[r[0],r[1],r[2],100*G],`(${r[0]}/100)x + (${r[1]}/100)y + (${r[2]}/100)z = ${G}`]];
+      if(okM(rows.map(q=>q[1])))return{rows,nm:['dinero invertido en A','dinero invertido en B','dinero invertido en C'],ask:'¿Cuánto invirtió en cada empresa?',ans:sl=>`A: ${sl[0]} €; B: ${sl[1]} €; C: ${sl[2]} €`};
+    }else if(k===1){
+      const y=100*ri(1,8),z=100*ri(1,8),x=y+z,T=x+y+z,t=[[6,10,14],[4,8,12],[5,10,15]][ri(0,2)],F=(x*(100+t[0])+y*(100+t[1])+z*(100+t[2]))/100;
+      const rows=[[`Un bar compra refrescos, cerveza y vino por un importe total de ${T} € sin impuestos.`,[1,1,1,T]],['El valor de los refrescos es igual al valor conjunto de la cerveza y el vino.',[1,-1,-1,0]],[`Con impuestos del ${t[0]} % en los refrescos, ${t[1]} % en la cerveza y ${t[2]} % en el vino, la factura asciende a ${F} €.`,[100+t[0],100+t[1],100+t[2],100*F],`${f(1+t[0]/100)}x + ${f(1+t[1]/100)}y + ${f(1+t[2]/100)}z = ${F}`]];
+      if(okM(rows.map(q=>q[1])))return{rows,nm:['valor inicial de los refrescos','valor inicial de la cerveza','valor inicial del vino'],ask:'Halla el valor inicial de cada bebida.',ans:sl=>`Refrescos: ${sl[0]} €; cerveza: ${sl[1]} €; vino: ${sl[2]} €`};
+    }else{
+      const N=ri(4,9)*100,x=0.3*N,y=ri(50,N-x-50),z=N-x-y,p=[ri(20,30),ri(25,34),ri(28,38)],C=p[0]*x+p[1]*y+p[2]*z;
+      const rows=[[`Un país compra ${N} miles de barriles de petróleo a tres proveedores, que lo venden a ${p[0]}, ${p[1]} y ${p[2]} dólares el barril.`,[1,1,1,N]],[`La factura asciende a ${C} miles de dólares.`,[p[0],p[1],p[2],C]],['Del primer proveedor recibe el 30 % del total.',[7,-3,-3,0],'x = 0,3(x + y + z)']];
+      if(okM(rows.map(q=>q[1])))return{rows,nm:['miles de barriles al primer proveedor','miles de barriles al segundo','miles de barriles al tercero'],ask:'¿Cuánto compra a cada proveedor?',ans:sl=>`Primero: ${sl[0]}; segundo: ${sl[1]}; tercero: ${sl[2]} (miles de barriles)`};
+    }
+  }
+};
+T.gaussreal=function(d){const fs=d===1?[fA,fB,fC,fE]:d===2?[fA,fB,fC,fD,fE,fG,fH]:[fA,fB,fC,fD,fE,fF,fG,fH];return mk(fs[ri(0,fs.length-1)](d));};
+const $=id=>document.getElementById(id);
+const seen=[];let cur=null,k=0,dif=2,bl='alg';
+const GR={alg:[
+['Ecuaciones exponenciales y logarítmicas',[['expo','Exponenciales (cambio de variable)'],['logs','Logarítmicas']]],
+['Ecuaciones polinómicas',[['cuadratica','De 2.º grado'],['bicuadrada','Bicuadradas'],['ruffini','De grado 3 y 4 (Ruffini)']]],
+['Ecuaciones racionales',[['xden','x en el denominador']]],
+['Sistemas de ecuaciones',[['sist2den','Racionales (con denominadores)'],['sistcuad','No lineales (con x²)'],['gauss','Lineales 3×3 (método de Gauss)'],['gaussreal','Problemas de 3×3 (Gauss)']]]],
+trig:[
+['Ecuaciones trigonométricas',[['teq','Seno, coseno o tangente'],['cuatro','Razón al cuadrado (4 ángulos)']]],
+['Fórmulas trigonométricas',[['fsuma','Ángulo suma y diferencia'],['fdoble','Ángulo doble'],['fmitad','Ángulo mitad']]],
+['Problemas de aplicación',[['real','Situaciones de la vida real'],['rbasico','Triángulos rectángulos (básico)'],['rcomplejo','Triángulos rectángulos (dos observaciones)'],['isosceles','Triángulos isósceles']]],
+['Razones trigonométricas y radianes',[['razones','Razones de un triángulo rectángulo'],['razcuad','Razones conocida una razón y el cuadrante'],['radianes','Radianes y longitud de arco']]],
+['Resolución de triángulos',[['rectangulo','Triángulos rectángulos'],['seno','Teorema del seno'],['coseno','Teorema del coseno'],['triangulo','Caso general']]]]};
+const srt=(a,b)=>a[0].localeCompare(b[0],'es');
+GR.alg=[
+['Ecuaciones bicuadradas',[['bicuadrada','Ecuaciones bicuadradas']]],
+['Ecuaciones con logaritmos',[['logs','Ecuaciones con logaritmos']]],
+['Ecuaciones con x en el denominador',[['xden','Ecuaciones con x en el denominador']]],
+['Ecuaciones con x en el exponente',[['expo','Ecuaciones con x en el exponente']]],
+['Ecuaciones polinómicas (regla de Ruffini)',[['ruffini','Ecuaciones polinómicas (regla de Ruffini)']]],
+['Sistemas de 2 ecuaciones',[['sist2den','Con denominadores'],['sistcuad','Con x al cuadrado']]],
+['Sistemas de 3 ecuaciones con Gauss',[['gauss','Sistemas de 3 ecuaciones'],['gaussreal','Problemas de la vida real']]]];
+GR.trig=[
+['Hallar las razones trigonométricas conocida una y el cuadrante',[['razcuad','Hallar las razones trigonométricas conocida una y el cuadrante']]],
+['Hallar los 4 ángulos con la misma razón trigonométrica',[['cuatro','Hallar los 4 ángulos con la misma razón trigonométrica']]],
+['Problemas con triángulo isósceles',[['isosceles','Problemas con triángulo isósceles']]],
+['Problemas de la vida real con triángulos',[['real','Problemas de la vida real con triángulos']]],
+['Problemas de triángulo rectángulo',[['rbasico','Básico'],['rcomplejo','Complejo']]],
+['Resolver triángulos (teoremas del seno y del coseno)',[['triangulo','Caso general'],['seno','Teorema del seno'],['coseno','Teorema del coseno'],['rectangulo','Triángulo rectángulo']]]];
+Object.values(GR).forEach(g=>{g.sort(srt);g.forEach(f=>f[1].sort(srt));});
+function fill(){
+  $('pl').innerHTML="<option value='all'>Todos los temas</option>"+GR[bl].map((f,i)=>`<option value='${i}'>${f[0]}</option>`).join('');
+  fillSub();
+}
+function fillSub(){
+  const v=$('pl').value,s=$('sub');
+  if(v==='all'||GR[bl][+v][1].length<2){s.classList.add('hid');s.innerHTML='';return;}
+  s.innerHTML="<option value='all'>Todos los subtipos</option>"+GR[bl][+v][1].map(c=>`<option value='${c[0]}'>${c[1]}</option>`).join('');
+  s.classList.remove('hid');
+}
+function upd(){
+  const L=cur.steps.length;
+  $('nx').classList.toggle('hid',k>=L);
+  $('dn').classList.toggle('hid',k<L);
+  $('nx').textContent=k===0?'Ver la solución paso a paso':`Siguiente paso (${k+1} de ${L})`;
+}
+function gen(){
+  const pv=$('pl').value,fam=pv==='all'?null:GR[bl][+pv],pool=fam?fam[1]:GR[bl].flatMap(f=>f[1]),sv=$('sub').value,t=(fam&&sv!=='all'&&fam[1].some(c=>c[0]===sv))?sv:pool[ri(0,pool.length-1)][0],fe=GR[bl].find(f=>f[1].some(c=>c[0]===t));
+  let o,n=0;
+  do{o=T[t](dif);n++;}while(seen.includes(o.q)&&n<20);
+  seen.push(o.q);if(seen.length>40)seen.shift();
+  cur=o;k=0;
+  $('tag').textContent=BL[bl][0]+' · '+fe[0]+(fe[1].length>1?' · '+fe[1].find(c=>c[0]===t)[1]:'')+' · '+['Fácil','Media','Difícil'][dif-1];
+  const hint=['real','rbasico','rcomplejo','isosceles'].includes(t)&&o.fq;
+  $('q').innerHTML=mx(o.q)+(hint?`<button class='btn o' id='hn' style='margin-top:12px'>💡 Pista: ver el dibujo</button><div id='hf'></div>`:(o.fq||''));
+  if(hint)$('hn').onclick=()=>{$('hf').innerHTML=o.fq;$('hn').classList.add('hid');};
+  $('steps').innerHTML='';upd();
+}
+$('nx').onclick=()=>{
+  const s=cur.steps[k];k++;
+  const el=document.createElement('div');el.className='step';
+  el.innerHTML=`<div class="n">${k}</div><div class="b"><h3>${mx(s[0])}</h3><div class="m math">${mx(s[1])}${k===cur.steps.length&&cur.fs?cur.fs:''}</div><p class="w"><b>¿Por qué?</b> ${mx(s[2])}</p></div>`;
+  $('steps').appendChild(el);upd();
+  el.scrollIntoView({behavior:'smooth',block:'nearest'});
+};
+const tog=(box,fn)=>{$(box).onclick=e=>{const c=e.target.closest('.chip');if(!c)return;$(box).querySelectorAll('.chip').forEach(x=>x.classList.toggle('on',x===c));fn(c);}};
+tog('bls',c=>{bl=c.dataset.b;fill();gen();});
+tog('chips',c=>{dif=+c.dataset.d;gen();});
+$('pl').onchange=()=>{fillSub();gen();};$('sub').onchange=gen;$('go').onclick=gen;
+const vec=(a,b)=>`(${num(a)}, ${num(b)})`;
+const cf=k=>k===1?'':k===-1?'−':String(k);
+const lin2=(a,b,c)=>{let s='';[[a,'x'],[b,'y']].forEach(([k,v])=>{if(!k)return;const t=(Math.abs(k)===1?'':Math.abs(k))+v;s+=s?(k<0?' − ':' + ')+t:(k<0?'−':'')+t;});if(c)s+=(c<0?' − ':' + ')+Math.abs(c);return s+' = 0';};
+const nrm=(a,b,c)=>{const g=gcd(gcd(Math.abs(a),Math.abs(b)),Math.abs(c))||1;let r=[a/g,b/g,c/g];if(r[0]<0||(r[0]===0&&r[1]<0))r=r.map(v=>-v);return r;};
+const sh=(v,q)=>q===0?v:`(${v} ${q<0?'+':'−'} ${Math.abs(q)})`;
+const pd=v=>v<0?`(${num(v)})`:String(v);
+const cq=r=>r[1]===1?cf(r[0]):(r[0]<0?'−':'')+'('+Math.abs(r[0])+'/'+r[1]+')';
+const fq=r=>r[1]===1?String(Math.abs(r[0])):Math.abs(r[0])+'/'+r[1];
+const sq2=(v,h)=>h===0?v+'²':`(${v} ${h<0?'+':'−'} ${Math.abs(h)})²`;
+const pm=(a,b)=>{const r=Array(a.length+b.length-1).fill(0);a.forEach((x,i)=>b.forEach((y,j)=>{r[i+j]+=x*y;}));return r;};
+const pa=(a,b)=>{const n=Math.max(a.length,b.length),u=Array(n-a.length).fill(0).concat(a),w=Array(n-b.length).fill(0).concat(b);return u.map((v,i)=>v+w[i]);};
+const der=c=>{const n=c.length-1;return c.slice(0,-1).map((v,i)=>v*(n-i));};
+const expl=(m,n)=>'y = '+(m[0]===0?'':cq(m)+'x')+(n[0]===0?(m[0]===0?'0':''):(m[0]===0?(n[0]<0?'−':''):(n[0]<0?' − ':' + '))+fq(n));
+T.vecop=function(d){
+  const a=nz(6),b=nz(6),c=nz(6),e=nz(6),r=d===1?2:3,k=nz(r),m=nz(r),wx=k*a+m*c,wy=k*b+m*e,n=wx*wx+wy*wy;
+  return{q:`Dados u = ${vec(a,b)} y v = ${vec(c,e)}, calcula w = ${cf(k)}u ${m<0?'−':'+'} ${Math.abs(m)===1?'':Math.abs(m)}v y su módulo.`,steps:[
+    ['Multiplicamos cada vector por su escalar',`${p(k)}·${vec(a,b)} = ${vec(k*a,k*b)}<br>${p(m)}·${vec(c,e)} = ${vec(m*c,m*e)}`,'Un escalar multiplica a cada componente del vector.'],
+    ['Sumamos componente a componente',`w = ${vec(k*a,k*b)} + ${vec(m*c,m*e)} = ${vec(wx,wy)}`,'Los vectores se suman sumando primero con primero y segundo con segundo.'],
+    ['Calculamos el módulo',`|w| = √(${p(wx)}² + ${p(wy)}²) = √${n} = ${rad(n)}`,'El módulo es la raíz cuadrada de la suma de los cuadrados de las componentes (teorema de Pitágoras).'],
+    ['Resultado',`<b>w = ${vec(wx,wy)}, |w| = ${rad(n)}</b>`,'Si el número bajo la raíz tiene factores cuadrados, se simplifica.']]};
+};
+T.vecang=function(d){
+  const perp=d===1&&Math.random()<.5;let a,b,c,e;
+  do{a=nz(6);b=nz(6);if(perp){const t=nz(3);c=-b*t;e=a*t;}else{c=nz(6);e=nz(6);}}while(!perp&&a*c+b*e===0);
+  const dot=a*c+b*e,n1=a*a+b*b,n2=c*c+e*e,st=[['Calculamos el producto escalar',`u·v = ${p(a)}·${p(c)} + ${p(b)}·${p(e)} = ${dot}`,'El producto escalar es la suma de los productos de las componentes: primera con primera y segunda con segunda.']];
+  if(perp){st.push(['Comparamos con 0','u·v = 0','Dos vectores son perpendiculares si y solo si su producto escalar es 0.'],['Resultado','<b>Los vectores son perpendiculares (90°)</b>','Con producto escalar 0 el coseno del ángulo es 0.']);}
+  else{const cs=dot/Math.sqrt(n1*n2),al=dg(Math.acos(cs));
+    st.push(['Calculamos los módulos',`|u| = √${n1} = ${rad(n1)}<br>|v| = √${n2} = ${rad(n2)}`,'Cada módulo es la raíz de la suma de los cuadrados de sus componentes.'],['Aplicamos la fórmula del ángulo',`cos α = u·v / (|u|·|v|) = ${dot} / (√${n1}·√${n2}) = ${fm(cs)}`,'Del producto escalar u·v = |u||v|cos α se despeja el coseno.'],['Calculamos el ángulo',`α = arccos(${fm(cs)}) = ${f(al)}°`,'Con la calculadora en grados, el arco coseno da un ángulo entre 0° y 180°.'],['Resultado',`<b>α ≈ ${f(al)}°</b>`,'Se redondea a dos decimales.']);}
+  return{q:perp?`Dados u = ${vec(a,b)} y v = ${vec(c,e)}, ¿son perpendiculares?`:`Calcula el ángulo que forman u = ${vec(a,b)} y v = ${vec(c,e)}.`,steps:st};
+};
+T.recta=function(d){
+  const x1=ri(-5,5),y1=ri(-5,5);let vx=nz(5),vy=nz(5);
+  if(d===3){[vy,vx]=red(vy,vx);}
+  const x2=x1+vx,y2=y1+vy,A=vy,B=-vx,C=vx*y1-vy*x1,N=nrm(A,B,C),m=rr(vy,vx),n=rr(y1*vx-vy*x1,vx);
+  const q1=d===1?`pasa por A${vec(x1,y1)} y B${vec(x2,y2)}`:d===2?`pasa por A${vec(x1,y1)} y tiene vector director v = ${vec(vx,vy)}`:`pasa por A${vec(x1,y1)} y tiene pendiente m = ${fs(m)}`;
+  const s1=d===1?['Calculamos el vector director',`AB = (${num(x2)} − ${p(x1)}, ${num(y2)} − ${p(y1)}) = ${vec(vx,vy)}`,'El vector director va de un punto al otro.']:d===2?['Identificamos el punto y el vector director',`A${vec(x1,y1)},  v = ${vec(vx,vy)}`,'La recta queda determinada por un punto y su vector director.']:['Obtenemos el vector director de la pendiente',`m = ${fs(m)} → v = ${vec(vx,vy)}`,'Una pendiente m = b / a corresponde al vector director (a, b).'];
+  const tt=(x,v)=>`${num(x)}${v<0?' − ':' + '}${Math.abs(v)===1?'':Math.abs(v)}t`;
+  return{q:`Halla la ecuación vectorial, las paramétricas, la continua, la general y la explícita de la recta que ${q1}.`,steps:[s1,
+    ['Escribimos la ecuación vectorial y las paramétricas',`(x, y) = ${vec(x1,y1)} + t·${vec(vx,vy)}<br>x = ${tt(x1,vx)}<br>y = ${tt(y1,vy)}`,'La ecuación vectorial suma al punto un múltiplo del vector director; las paramétricas separan cada coordenada.'],
+    ['Despejamos t para la ecuación continua',`${sh('x',x1)}/${pd(vx)} = ${sh('y',y1)}/${pd(vy)}`,'Si se despeja t en las dos paramétricas y se igualan, queda la ecuación continua.'],
+    ['Quitamos denominadores: ecuación general',`${p(vy)}·${sh('x',x1)} = ${p(vx)}·${sh('y',y1)}<br>${lin2(A,B,C)}${N[0]!==A||N[1]!==B?'<br>simplificando: '+lin2(N[0],N[1],N[2]):''}`,'Multiplicando en cruz y pasando todo a un miembro queda Ax + By + C = 0.'],
+    ['Despejamos y: ecuación explícita',expl(m,n),'La pendiente es el coeficiente de x: m = −A / B.'],
+    ['Resultado',`<b>${lin2(N[0],N[1],N[2])}</b><br>${expl(m,n)}`,'La ecuación general y la explícita describen la misma recta.']]};
+};
+T.posrel=function(d){
+  const kind=d===1?ri(0,2):0,x0=ri(-4,4),y0=ri(-4,4);let a1,b1,a2,b2;
+  do{a1=nz(4);b1=nz(4);a2=nz(4);b2=nz(4);}while(kind===0&&a1*b2-a2*b1===0);
+  const c1=-(a1*x0+b1*y0);let c2=-(a2*x0+b2*y0);
+  if(kind>0){const k=[2,3,-1,-2][ri(0,3)];a2=k*a1;b2=k*b1;c2=kind===2?k*c1:k*c1+ri(1,5)*(Math.random()<.5?1:-1);}
+  const D=a1*b2-a2*b1,u=a1*c2-a2*c1,w=b1*c2-b2*c1;
+  const st=[['Calculamos D = a₁b₂ − a₂b₁',`D = ${p(a1)}·${p(b2)} − ${p(a2)}·${p(b1)} = ${D}${D===0?`<br>a₁c₂ − a₂c₁ = ${u}<br>b₁c₂ − b₂c₁ = ${w}`:''}`,D===0?'Con D = 0 los coeficientes de x e y son proporcionales; hay que mirar también los términos independientes.':'Si D ≠ 0, los coeficientes de x e y no son proporcionales.']];
+  if(D!==0){
+    st.push(['Las rectas son secantes',`D = ${D} ≠ 0`,'Rectas con coeficientes no proporcionales se cortan en un único punto.'],['Hallamos el punto de corte',`x = (b₁c₂ − b₂c₁) / D = (${p(b1)}·${p(c2)} − ${p(b2)}·${p(c1)}) / ${pd(D)} = ${num(x0)}<br>y = (c₁a₂ − c₂a₁) / D = (${p(c1)}·${p(a2)} − ${p(c2)}·${p(a1)}) / ${pd(D)} = ${num(y0)}`,'Es la solución del sistema formado por las dos ecuaciones (regla de Cramer).']);
+    if(d===3){const n1=a1*a1+b1*b1,n2=a2*a2+b2*b2,dot=Math.abs(a1*a2+b1*b2),cs=dot/Math.sqrt(n1*n2),al=dg(Math.acos(Math.min(1,cs)));
+      st.push(['Calculamos el ángulo entre las rectas',`cos α = |a₁a₂ + b₁b₂| / (√(a₁² + b₁²)·√(a₂² + b₂²)) = ${dot} / (√${n1}·√${n2}) = ${fm(cs)}<br>α = ${f(al)}°`,'El ángulo entre dos rectas es el que forman sus vectores normales (o directores), siempre agudo, por eso el valor absoluto.']);}
+    st.push(['Resultado',`<b>Secantes en P${vec(x0,y0)}${d===3?`; α ≈ ${f(dg(Math.acos(Math.min(1,Math.abs(a1*a2+b1*b2)/Math.sqrt((a1*a1+b1*b1)*(a2*a2+b2*b2))))))}°`:''}</b>`,'El punto de corte cumple las dos ecuaciones.']);
+  }else{
+    const co=u===0&&w===0;
+    st.push([co?'Las rectas son coincidentes':'Las rectas son paralelas',co?'a₁c₂ − a₂c₁ = 0 y b₁c₂ − b₂c₁ = 0':'D = 0 pero los términos independientes no son proporcionales',co?'Si todos los coeficientes son proporcionales, las dos ecuaciones describen la misma recta.':'Si solo lo son los de x e y, las rectas tienen la misma dirección y no se cortan.'],['Resultado',`<b>${co?'Coincidentes':'Paralelas (no se cortan)'}</b>`,'La posición relativa se decide con las proporciones de los coeficientes.']);
+  }
+  return{q:`Estudia la posición relativa de r: ${lin2(a1,b1,c1)} y s: ${lin2(a2,b2,c2)}${d===3?'. Si se cortan, halla el punto de corte y el ángulo que forman':'. Si se cortan, halla el punto de corte'}.`,steps:st};
+};
+T.dpp=function(){
+  const x1=ri(-6,6),y1=ri(-6,6),dx=nz(6),dy=nz(6),n=dx*dx+dy*dy;
+  return{q:`Calcula la distancia entre A${vec(x1,y1)} y B${vec(x1+dx,y1+dy)}.`,steps:[['Calculamos el vector AB',`AB = (${num(x1+dx)} − ${p(x1)}, ${num(y1+dy)} − ${p(y1)}) = ${vec(dx,dy)}`,'La distancia entre dos puntos es el módulo del vector que los une.'],['Calculamos su módulo',`d = √(${p(dx)}² + ${p(dy)}²) = √${n} = ${rad(n)}`,'Teorema de Pitágoras con las componentes del vector.'],['Resultado',`<b>d = ${rad(n)} ≈ ${f(Math.sqrt(n))}</b>`,'Se da el valor exacto y su aproximación decimal.']]};
+};
+T.dpr=function(){
+  let a,b,c,x0,y0,v;
+  do{a=nz(4);b=nz(4);c=ri(-8,8);x0=ri(-5,5);y0=ri(-5,5);v=a*x0+b*y0+c;}while(v===0);
+  const n=a*a+b*b;
+  return{q:`Calcula la distancia del punto P${vec(x0,y0)} a la recta r: ${lin2(a,b,c)}.`,steps:[['Escribimos la fórmula','d(P, r) = |Ax₀ + By₀ + C| / √(A² + B²)','La fórmula necesita la recta en forma general Ax + By + C = 0.'],['Sustituimos los valores',`d = |${p(a)}·${p(x0)} + ${p(b)}·${p(y0)} + ${p(c)}| / √(${p(a)}² + ${p(b)}²) = ${Math.abs(v)} / √${n}`,'Se sustituyen las coordenadas del punto en la ecuación de la recta.'],['Resultado',`<b>d = ${Math.abs(v)} / ${rad(n)} ≈ ${f(Math.abs(v)/Math.sqrt(n))}</b>`,'La distancia siempre es positiva, por el valor absoluto.']]};
+};
+T.drr=function(){
+  let a,b;do{a=nz(4);b=nz(4);}while(gcd(Math.abs(a),Math.abs(b))>1);
+  const c1=ri(-8,8),k=[2,3][ri(0,1)];let c2;do{c2=ri(-8,8);}while(c2===c1);
+  const n=a*a+b*b;
+  return{q:`Calcula la distancia entre las rectas paralelas r: ${lin2(a,b,c1)} y s: ${lin2(k*a,k*b,k*c2)}.`,steps:[['Dejamos las dos ecuaciones con los mismos coeficientes',`s: ${lin2(k*a,k*b,k*c2)} → (entre ${k}) ${lin2(a,b,c2)}`,'Para comparar las rectas, los coeficientes de x e y deben ser iguales.'],['Escribimos la fórmula','d(r, s) = |C₁ − C₂| / √(A² + B²)','Es la distancia de un punto cualquiera de una recta a la otra.'],['Sustituimos',`d = |${p(c1)} − ${p(c2)}| / √(${p(a)}² + ${p(b)}²) = ${Math.abs(c1-c2)} / √${n}`,'Se restan los términos independientes.'],['Resultado',`<b>d = ${Math.abs(c1-c2)} / ${rad(n)} ≈ ${f(Math.abs(c1-c2)/Math.sqrt(n))}</b>`,'Valor exacto y aproximado.']]};
+};
+T.mediatriz=function(){
+  const x1=ri(-6,6),y1=ri(-6,6),dx=2*nz(3),dy=2*nz(3),x2=x1+dx,y2=y1+dy,mx0=x1+dx/2,my0=y1+dy/2,C=-(dx*mx0+dy*my0),N=nrm(dx,dy,C);
+  return{q:`Halla la ecuación de la mediatriz del segmento de extremos A${vec(x1,y1)} y B${vec(x2,y2)}.`,steps:[['Calculamos el punto medio',`M = ((${num(x1)} + ${p(x2)}) / 2, (${num(y1)} + ${p(y2)}) / 2) = ${vec(mx0,my0)}`,'La mediatriz pasa por el punto medio del segmento.'],['Calculamos el vector AB',`AB = ${vec(dx,dy)}`,'La mediatriz es perpendicular al segmento, así que AB es un vector normal a ella.'],['Escribimos la ecuación',`${p(dx)}·${sh('x',mx0)} + ${p(dy)}·${sh('y',my0)} = 0<br>${lin2(dx,dy,C)}${N[0]!==dx?'<br>simplificando: '+lin2(N[0],N[1],N[2]):''}`,'Los puntos P de la mediatriz cumplen AB·MP = 0, es decir, MP es perpendicular a AB.'],['Resultado',`<b>${lin2(N[0],N[1],N[2])}</b>`,'También son los puntos que equidistan de A y de B.']]};
+};
+T.simpunto=function(){
+  const ax=ri(-7,7),ay=ri(-7,7),mx0=ri(-5,5),my0=ri(-5,5);
+  return{q:`Halla el simétrico del punto A${vec(ax,ay)} respecto del punto M${vec(mx0,my0)}.`,steps:[['Planteamos que M es el punto medio de A y A′','M = ((x_A + x_A′) / 2, (y_A + y_A′) / 2)','El simétrico respecto de un punto está en la misma recta, a la misma distancia y al otro lado.'],['Despejamos las coordenadas de A′',`x_A′ = 2·${p(mx0)} − ${p(ax)} = ${num(2*mx0-ax)}<br>y_A′ = 2·${p(my0)} − ${p(ay)} = ${num(2*my0-ay)}`,'De (a + x) / 2 = m se obtiene x = 2m − a.'],['Resultado',`<b>A′ = ${vec(2*mx0-ax,2*my0-ay)}</b>`,'Se comprueba que el punto medio de A y A′ es M.']]};
+};
+T.simrecta=function(){
+  let a,b;do{a=nz(3);b=nz(3);}while(gcd(Math.abs(a),Math.abs(b))>1);
+  const hx=ri(-4,4),hy=ri(-4,4),k=nz(2),px=hx+k*a,py=hy+k*b,c=-(a*hx+b*hy),C2=a*py-b*px;
+  return{q:`Halla el simétrico del punto P${vec(px,py)} respecto de la recta r: ${lin2(a,b,c)}.`,steps:[['Trazamos la recta perpendicular a r por P',`Dirección normal de r: (${num(a)}, ${num(b)})<br>s: ${sh('x',px)}/${pd(a)} = ${sh('y',py)}/${pd(b)} → ${lin2(b,-a,C2)}`,'La perpendicular a r tiene como vector director el vector normal de r.'],['Hallamos el pie de la perpendicular H',`r: ${lin2(a,b,c)}<br>s: ${lin2(b,-a,C2)}<br>H = ${vec(hx,hy)}`,'H es la solución del sistema formado por r y s.'],['H es el punto medio de P y P′',`P′ = 2H − P = (2·${p(hx)} − ${p(px)}, 2·${p(hy)} − ${p(py)}) = ${vec(2*hx-px,2*hy-py)}`,'El simétrico está al otro lado de la recta, a la misma distancia que P.'],['Resultado',`<b>P′ = ${vec(2*hx-px,2*hy-py)}</b>`,'Se puede comprobar que el punto medio de P y P′ está en r.']]};
+};
+T.circ=function(){
+  const h=ri(-5,5),k=ri(-5,5),r=ri(2,7),D=-2*h,E=-2*k,F=h*h+k*k-r*r;
+  return{q:`Halla el centro y el radio de la circunferencia x² + y²${D?tm(D,'x'):''}${E?tm(E,'y'):''}${F?ss(F):''} = 0.`,steps:[['Agrupamos los términos en x y en y',`(x²${D?tm(D,'x'):''}) + (y²${E?tm(E,'y'):''}) = ${num(-F)}`,'Se separan las x y las y para completar cuadrados.'],['Completamos los cuadrados',`${sq2('x',h)} + ${sq2('y',k)} = ${num(-F)} + ${h*h} + ${k*k} = ${r*r}`,'Se suma a los dos miembros (D/2)² y (E/2)² para formar los cuadrados perfectos.'],['Comparamos con (x − a)² + (y − b)² = r²',`Centro: C${vec(h,k)}<br>r² = ${r*r} → r = ${r}`,'En esa forma el centro es (a, b) y el lado derecho es r².'],['Resultado',`<b>C${vec(h,k)}, r = ${r}</b>`,'El radio es la raíz positiva.']]};
+};
+T.elipse=function(){
+  const [a,b,c]=[[5,3,4],[5,4,3],[13,12,5],[10,8,6],[10,6,8],[13,5,12],[17,8,15]][ri(0,6)];
+  return{q:`Halla los semiejes, los focos y la excentricidad de la elipse x²/${a*a} + y²/${b*b} = 1.`,steps:[['Identificamos los semiejes',`a² = ${a*a} → a = ${a}<br>b² = ${b*b} → b = ${b}`,'En x²/a² + y²/b² = 1, el mayor de los denominadores es a² y corresponde al eje de los focos.'],['Calculamos la semidistancia focal',`c² = a² − b² = ${a*a} − ${b*b} = ${c*c} → c = ${c}`,'En la elipse se cumple a² = b² + c².'],['Situamos los focos',`F = (${c}, 0) y F′ = (−${c}, 0)`,'Los focos están sobre el eje mayor (el eje x), a distancia c del centro.'],['Calculamos la excentricidad',`e = c / a = ${c} / ${a} = ${fs(rr(c,a))}`,'La excentricidad mide lo achatada que es la elipse y siempre vale menos que 1.'],['Resultado',`<b>a = ${a}, b = ${b}, F(±${c}, 0), e = ${fs(rr(c,a))}</b>`,'Se comprueba que 0 < e < 1.']]};
+};
+const pp=(v,s)=>`${v}${s}`;
+const XP=p0=>p0<0?`(x + ${-p0})`:`(x − ${p0})`;
+const XM=p0=>p0<0?`x + ${-p0}`:`x − ${p0}`;
+T.limx=function(d){
+  let p0=nz(4),q0,r0;do{q0=nz(5);}while(q0===p0);do{r0=nz(5);}while(r0===p0||r0===q0);
+  const lm=`lím<sub>x→${p0}</sub>`;
+  if(d===3){
+    const b=ri(2,4),c=nz(5),a=b*b-c,rt=`√(x ${a<0?'−':'+'} ${Math.abs(a)})`;
+    return{q:`Calcula ${lm} (${rt} − ${b}) / (${XM(c)})`.replace(`x→${p0}`,`x→${c}`),steps:[['Sustituimos x = '+c,`(√${b*b} − ${b}) / 0 = 0 / 0`,'Sale 0/0: es una indeterminación y hay que transformar la expresión.'],['Multiplicamos por el conjugado',`(${rt} − ${b})(${rt} + ${b}) = (x ${a<0?'−':'+'} ${Math.abs(a)}) − ${b*b} = ${XM(c)}`,'El producto de una resta por su suma es una diferencia de cuadrados: desaparece la raíz.'],['Simplificamos',`(${XM(c)}) / ((${XM(c)})·(${rt} + ${b})) = 1 / (${rt} + ${b})`,'Se cancela el factor que anulaba el denominador.'],['Sustituimos otra vez',`1 / (√${b*b} + ${b}) = 1 / ${2*b}`,'Ahora el denominador ya no es 0.'],['Resultado',`<b>1/${2*b}</b>`,'El límite existe y es finito.']]};
+  }
+  const nu=poly([1,-(p0+q0),p0*q0]),dn=d===1?XM(p0):poly([1,-(p0+r0),p0*r0]),res=d===1?[p0-q0,1]:rr(p0-q0,p0-r0);
+  return{q:`Calcula ${lm} (${nu}) / (${dn})`,steps:[['Sustituimos x = '+p0,`(${num(ev([1,-(p0+q0),p0*q0],p0))}) / (${num(d===1?0:ev([1,-(p0+r0),p0*r0],p0))}) = 0 / 0`,'Sale 0/0: es una indeterminación. Como el numerador y el denominador se anulan, tienen el factor (x − a) en común.'],['Factorizamos',`${nu} = ${XP(p0)}${XP(q0)}${d===1?'':`<br>${dn} = ${XP(p0)}${XP(r0)}`}`,'Las raíces del polinomio permiten escribirlo como producto de factores.'],['Simplificamos el factor común',`${XP(q0)}${d===1?'':` / ${XP(r0)}`}`,'Se cancela (x − a), que es lo que causaba el 0/0.'],['Sustituimos',`${d===1?`${p0} ${q0<0?'+':'−'} ${Math.abs(q0)}`:`(${p0} ${q0<0?'+':'−'} ${Math.abs(q0)}) / (${p0} ${r0<0?'+':'−'} ${Math.abs(r0)})`} = ${fs(res)}`,'Ahora el denominador ya no se anula.'],['Resultado',`<b>${fs(res)}</b>`,'Valor del límite.']]};
+};
+T.liminf=function(d){
+  const n=ri(1,3),m=d===1?n:ri(1,3),a=nz(5),b=nz(5),mk2=(g,l)=>[l,...Array(g).fill(0).map(()=>ri(-5,5))];
+  const P=mk2(n,a),Q=mk2(m,b),lm='lím<sub>x→+∞</sub>';
+  const res=n<m?'0':n===m?fs(rr(a,b)):((a>0)===(b>0)?'+∞':'−∞');
+  return{q:`Calcula ${lm} (${poly(P)}) / (${poly(Q)})`,steps:[['Comparamos los grados',`grado del numerador = ${n}<br>grado del denominador = ${m}`,'En el infinito manda el término de mayor grado de cada polinomio.'],['Aplicamos la regla',n<m?'Grado del numerador < grado del denominador → el límite es 0':n===m?`Grados iguales → cociente de coeficientes principales: ${a} / ${b}`:`Grado del numerador > grado del denominador → ±∞, según el signo de ${a} / ${b}`,n<m?'El denominador crece más rápido que el numerador.':n===m?'Los dos crecen igual de rápido: solo importa la proporción entre sus coeficientes principales.':'El numerador crece más rápido: el cociente se hace infinito con el signo de los coeficientes.'],['Resultado',`<b>${res}</b>`,'Valor del límite.']]};
+};
+T.asin=function(d){
+  if(d===1){
+    let a,b,c,e;do{a=nz(4);b=nz(5);c=nz(4);e=nz(5);}while(a*e-b*c===0);
+    return{q:`Halla las asíntotas de f(x) = (${poly([a,b])}) / (${poly([c,e])}).`,steps:[['Asíntota vertical',`${poly([c,e])} = 0 → x = ${fs(rr(-e,c))}`,'Se busca el valor que anula el denominador sin anular el numerador.'],['Asíntota horizontal',`lím<sub>x→∞</sub> f(x) = ${a} / ${c} = ${fs(rr(a,c))}`,'Con grados iguales, el límite en el infinito es el cociente de los coeficientes principales.'],['Resultado',`<b>x = ${fs(rr(-e,c))};  y = ${fs(rr(a,c))}</b>`,'No hay oblicua porque ya hay horizontal.']]};
+  }
+  let a,b,c,p0;do{a=nz(3);b=nz(5);c=nz(5);p0=nz(4);}while(ev([a,b,c],p0)===0);
+  const mq=b+a*p0,rem=c+p0*mq;
+  return{q:`Halla las asíntotas de f(x) = (${poly([a,b,c])}) / (${XM(p0)}).`,steps:[['Asíntota vertical',`${XM(p0)} = 0 → x = ${p0}<br>Numerador en x = ${p0}: ${num(ev([a,b,c],p0))} ≠ 0`,'El denominador se anula y el numerador no: hay asíntota vertical.'],['Asíntota horizontal',`grado del numerador (2) > grado del denominador (1) → lím f(x) = ±∞: no hay`,'Si el numerador tiene mayor grado, no hay asíntota horizontal.'],['Asíntota oblicua: dividimos',`${poly([a,b,c])} = (${XM(p0)})·(${poly([a,mq])}) ${rem<0?'−':'+'} ${Math.abs(rem)}`,'Si el grado del numerador supera en 1 al del denominador, la división da la recta y = mx + n.'],['Resultado',`<b>x = ${p0};  y = ${poly([a,mq])}</b>`,'El cociente de la división es la asíntota oblicua.']]};
+};
+T.cont=function(d){
+  const p0=nz(4),c=nz(6),k=nz(4),b=k*p0+c-p0*p0,lv=p0*p0+b;
+  return{q:`Halla k para que f sea continua en x = ${p0}: f(x) = x² ${b<0?'−':'+'} ${Math.abs(b)} si x ≤ ${p0};  f(x) = kx ${c<0?'−':'+'} ${Math.abs(c)} si x > ${p0}.`,steps:[['Condición de continuidad','lím f(x) por la izquierda = lím f(x) por la derecha = f(a)','Una función es continua en a si los límites laterales y el valor de la función coinciden.'],['Límite por la izquierda',`lím<sub>x→${p0}⁻</sub> f(x) = ${p(p0)}² ${b<0?'−':'+'} ${Math.abs(b)} = ${lv}`,'A la izquierda se usa la primera expresión.'],['Límite por la derecha',`lím<sub>x→${p0}⁺</sub> f(x) = k·${p(p0)} ${c<0?'−':'+'} ${Math.abs(c)}`,'A la derecha se usa la segunda expresión.'],['Igualamos y despejamos k',`k·${p(p0)} ${c<0?'−':'+'} ${Math.abs(c)} = ${lv} → k = ${num(lv-c)} / ${pd(p0)} = ${num(k)}`,'La igualdad de los límites laterales es una ecuación en k.'],['Resultado',`<b>k = ${num(k)}</b>`,'Con ese valor f es continua en x = '+p0+'.']]};
+};
+T.deriv=function(d){
+  if(d===1){
+    const co=[nz(4),nz(5),nz(6),ri(-6,6)];
+    return{q:`Deriva f(x) = ${poly(co)}.`,steps:[['Recordamos la derivada de una potencia','(xⁿ)′ = n·xⁿ⁻¹  y  (k)′ = 0','Cada término se deriva por separado.'],['Derivamos término a término',`f′(x) = ${poly(der(co))}`,'El exponente baja multiplicando al coeficiente y el exponente disminuye en 1.'],['Resultado',`<b>f′(x) = ${poly(der(co))}</b>`,'La derivada de una constante es 0.']]};
+  }
+  if(d===2){
+    if(Math.random()<.5){
+      const a=nz(5),b=nz(4),c=nz(5),u=[1,0,a],v=[b,c],r=pa(pm(der(u),v),pm(u,der(v)));
+      return{q:`Deriva f(x) = (${poly(u)})(${poly(v)}).`,steps:[['Regla del producto','(u·v)′ = u′·v + u·v′','La derivada de un producto no es el producto de las derivadas.'],['Derivamos cada factor',`u = ${poly(u)} → u′ = ${poly(der(u))}<br>v = ${poly(v)} → v′ = ${poly(der(v))}`,'Cada factor es un polinomio sencillo.'],['Sustituimos y desarrollamos',`f′(x) = (${poly(der(u))})(${poly(v)}) + (${poly(u)})(${poly(der(v))}) = ${poly(r)}`,'Se multiplican los paréntesis y se agrupan los términos semejantes.'],['Resultado',`<b>f′(x) = ${poly(r)}</b>`,'Derivada ya simplificada.']]};
+    }
+    let a,b,c,e;do{a=nz(5);b=nz(5);c=nz(4);e=nz(5);}while(a*e-b*c===0);
+    const nn=a*e-b*c;
+    return{q:`Deriva f(x) = (${poly([a,b])}) / (${poly([c,e])}).`,steps:[['Regla del cociente','(u / v)′ = (u′·v − u·v′) / v²','Se deriva el numerador y el denominador y se combinan.'],['Derivamos numerador y denominador',`u = ${poly([a,b])} → u′ = ${a}<br>v = ${poly([c,e])} → v′ = ${c}`,'Ambos son rectas: su derivada es la pendiente.'],['Sustituimos y simplificamos',`f′(x) = (${a}·(${poly([c,e])}) − (${poly([a,b])})·${c}) / (${poly([c,e])})² = ${num(nn)} / (${poly([c,e])})²`,'Al desarrollar el numerador desaparecen los términos con x.'],['Resultado',`<b>f′(x) = ${num(nn)} / (${poly([c,e])})²</b>`,'El numerador es constante.']]};
+  }
+  const a=nz(4),b=nz(5),n=ri(3,5),opt=ri(0,3),g=poly([a,b]),sp={2:'²',3:'³',4:'⁴',5:'⁵'};
+  const O=[
+    {f:`(${g})${sp[n]}`,ex:`g(x)${sp[n]}`,ou:`${n}·g(x)${n-1===1?'':sp[n-1]}`,r:`${n*a}(${g})${n-1===1?'':sp[n-1]}`,rule:'(gⁿ)′ = n·gⁿ⁻¹·g′'},
+    {f:`e<sup>${poly([a,0,0])}</sup>`,ex:'e^g(x)',ou:'e^g(x)',r:`${2*a}x·e<sup>${poly([a,0,0])}</sup>`,rule:'(e^g)′ = e^g·g′',inn:`g = ${poly([a,0,0])} → g′ = ${poly([2*a,0])}`},
+    {f:`ln(${poly([a,0,b])})`,ex:'ln g(x)',ou:'1 / g(x)',r:`(${poly([2*a,0])}) / (${poly([a,0,b])})`,rule:'(ln g)′ = g′ / g',inn:`g = ${poly([a,0,b])} → g′ = ${poly([2*a,0])}`},
+    {f:`sen(${g})`,ex:'sen g(x)',ou:'cos g(x)',r:`${cf(a)}cos(${g})`,rule:'(sen g)′ = cos g·g′'}][opt];
+  return{q:`Deriva f(x) = ${O.f}.`,steps:[['Reconocemos una función compuesta',`f(x) = ${O.ex}`,'Hay una función dentro de otra: se usa la regla de la cadena.'],['Escribimos la regla',O.rule,'Se deriva la función exterior (dejando la interior igual) y se multiplica por la derivada de la interior.'],['Derivamos la función interior',O.inn||`g = ${g} → g′ = ${a}`,'La interior es un polinomio sencillo.'],['Resultado',`<b>f′(x) = ${O.r}</b>`,'Se multiplica el resultado exterior por g′.']]};
+};
+T.tang=function(d){
+  const co=d===1?[nz(3),nz(5),ri(-5,5)]:[nz(2),nz(4),nz(5),ri(-5,5)],x0=ri(-2,3),y0=ev(co,x0),fp=der(co),m=ev(fp,x0),n=y0-m*x0;
+  const st=[['Calculamos f(a)',`f(${x0}) = ${num(y0)}`,'Es la ordenada del punto de tangencia: P'+vec(x0,y0)+'.'],['Derivamos',`f′(x) = ${poly(fp)}`,'La derivada da la pendiente de la tangente en cada punto.'],['Calculamos la pendiente',`m = f′(${x0}) = ${num(m)}`,'La pendiente de la tangente es la derivada en el punto.'],['Ecuación de la recta tangente',`y − ${p(y0)} = ${p(m)}·(x − ${p(x0)}) → y = ${poly([m,n])}`,'Ecuación punto-pendiente: y − f(a) = f′(a)(x − a).']];
+  if(d>1){if(m!==0){const n2=rr(x0+y0*m,m);st.push(['Ecuación de la recta normal',`mₙ = −1 / ${p(m)} = ${fs(rr(-1,m))} → ${expl(rr(-1,m),n2)}`,'La normal es perpendicular a la tangente: su pendiente es la opuesta del inverso.']);}else st.push(['Ecuación de la recta normal',`m = 0: la tangente es horizontal → la normal es x = ${x0}`,'Si la tangente es horizontal, la normal es vertical.']);}
+  st.push(['Resultado',`<b>Tangente: y = ${poly([m,n])}</b>`,'La recta toca a la curva en el punto y tiene su misma pendiente.']);
+  return{q:`Para f(x) = ${poly(co)}, halla la recta tangente${d>1?' y la recta normal':''} en x = ${x0}.`,steps:st};
+};
+T.extr=function(){
+  let p0,q0;do{p0=ri(-4,3);q0=p0+2*ri(1,3);}while(q0===p0);
+  const s=(p0+q0)/2,k0=ri(-5,5),co=[1,-3*s,3*p0*q0,k0],Q=quad(1,-2*s,p0*q0,'x'),fp0=ev(co,p0),fq0=ev(co,q0);
+  return{q:`Estudia la monotonía y los extremos de f(x) = ${poly(co)}.`,steps:[['Derivamos',`f′(x) = ${poly(der(co))}`,'Los extremos relativos están entre los puntos donde la derivada se anula.'],['Igualamos la derivada a 0 (dividimos entre 3)',`${poly(der(co))} = 0 → ${poly([1,-2*s,p0*q0])} = 0`,'Se obtiene una ecuación de 2.º grado.'],...Q.st,['Estudiamos el signo de f′',`(−∞, ${p0}): f′ > 0 → crece<br>(${p0}, ${q0}): f′ < 0 → decrece<br>(${q0}, +∞): f′ > 0 → crece`,'La derivada es una parábola hacia arriba: es positiva fuera de sus raíces y negativa entre ellas.'],['Clasificamos los puntos',`x = ${p0}: pasa de crecer a decrecer → máximo, f(${p0}) = ${num(fp0)}<br>x = ${q0}: pasa de decrecer a crecer → mínimo, f(${q0}) = ${num(fq0)}`,'Si f′ cambia de + a − hay máximo; si cambia de − a + hay mínimo.'],['Resultado',`<b>Máximo en (${p0}, ${num(fp0)}); mínimo en (${q0}, ${num(fq0)})</b>`,'Se dan las coordenadas completas de cada extremo.']]};
+};
+const TBL={sen:{'1':[90],'-1':[270],'0':[0,180],'1/2':[30,150],'-1/2':[210,330]},cos:{'1':[0],'-1':[180],'0':[90,270],'1/2':[60,300],'-1/2':[120,240]}};
+const rf=(P,Q)=>{const n=P*Q;let s=1;for(let t=2;t*t<=n;t++)if(n%(t*t)===0)s=t;const inn=n/(s*s),[c0,q0]=red(s,Q);if(inn===1)return q0===1?String(c0):c0+'/'+q0;return(c0===1?'':c0)+'√'+inn+(q0===1?'':'/'+q0);};
+const prd=v=>v===0?'0':pi(v,180);
+const sgnAt=(f,q)=>f==='sen'?(q<3?1:-1):f==='cos'?((q===1||q===4)?1:-1):((q===1||q===3)?1:-1);
+const lstA=a=>a.join('°, x = ')+'°';
+T.fcuad=function(d){
+  const [a,b,h]=[[3,4,5],[5,12,13],[8,15,17],[7,24,25]][ri(0,3)],Qd=ri(1,4),sS=Qd<3?1:-1,sC=(Qd===1||Qd===4)?1:-1,sT=sS*sC,deg=Math.random()<.5,fn=['sen','cos','tg'][ri(0,2)];
+  const sx=[sS*a,h],cx=[sC*b,h],tx=rr(sT*a,b),Qn=['1.er','2.º','3.er','4.º'][Qd-1],val=fn==='sen'?fs(sx):fn==='cos'?fs(cx):fs(tx);
+  let q1=Qd,q2=Qd;
+  if(Math.random()<.5){const nb=[Qd-1,Qd+1].filter(q=>q>=1&&q<=4&&sgnAt(fn,q)!==sgnAt(fn,Qd));if(nb.length){const o=nb[ri(0,nb.length-1)];q1=Math.min(Qd,o);q2=Math.max(Qd,o);}}
+  const lo=(q1-1)*90,hi=q2*90,rel=q1===q2?'<':'≤',iv=deg?`${lo}° ${rel} x ${rel} ${hi}°`:`${prd(lo)} ${rel} x ${rel} ${prd(hi)}`;
+  const Qh=Qd<=2?1:2,ang=deg?'45°':'π/4',one=[1,1],mneg=[-1,1],ALL=['sen2','cos2','tg2','senh','cosh','tgh','tgs','tgd'],pick=[];
+  while(pick.length<d+1){const t=ALL[ri(0,7)];if(!pick.includes(t))pick.push(t);}
+  const Qhn=Qh===1?'1.er':'2.º';
+  const it={
+    sen2:()=>{const v=rm(rm(sx,cx),[2,1]);return['sen 2x',`sen 2x = 2·sen x·cos x = 2·(${fs(sx)})·(${fs(cx)}) = ${fs(v)}`,'Fórmula del ángulo doble del seno.',fs(v)];},
+    cos2:()=>{const v=rsb(rm(cx,cx),rm(sx,sx));return['cos 2x',`cos 2x = cos²x − sen²x = (${fs(cx)})² − (${fs(sx)})² = ${fs(v)}`,'Fórmula del ángulo doble del coseno.',fs(v)];},
+    tg2:()=>{const v=rdv(rm([2,1],tx),rsb(one,rm(tx,tx)));return['tg 2x',`tg 2x = 2·tg x / (1 − tg²x) = 2·(${fs(tx)}) / (1 − (${fs(tx)})²) = ${fs(v)}`,'Fórmula del ángulo doble de la tangente.',fs(v)];},
+    senh:()=>{const [P,Q]=rdv(rsb(one,cx),[2,1]),v=rf(P,Q);return['sen(x/2)',`sen(x/2) = +√((1 − cos x) / 2) = √((1 − (${fs(cx)})) / 2) = √(${P}/${Q}) = ${v}`,`x/2 está en el ${Qhn} cuadrante (entre ${(Qd-1)*45}° y ${Qd*45}°): el seno es positivo, así que la raíz es positiva.`,v];},
+    cosh:()=>{const [P,Q]=rdv(rsb(one,rm(cx,mneg)),[2,1]),sg=Qh===1?'+':'−',v=(Qh===1?'':'−')+rf(P,Q);return['cos(x/2)',`cos(x/2) = ${sg}√((1 + cos x) / 2) = ${sg}√((1 + (${fs(cx)})) / 2) = ${sg}√(${P}/${Q}) = ${v}`,`x/2 está en el ${Qhn} cuadrante: el coseno es ${Qh===1?'positivo':'negativo'}, y eso decide el signo de la raíz.`,v];},
+    tgh:()=>{const v=rdv(sx,rsb(one,rm(cx,mneg)));return['tg(x/2)',`tg(x/2) = sen x / (1 + cos x) = (${fs(sx)}) / (1 + (${fs(cx)})) = ${fs(v)}`,'Esta forma de la tangente del ángulo mitad no lleva raíz, así que no hay que decidir el signo.',fs(v)];},
+    tgs:()=>{const v=rdv(rsb(tx,mneg),rsb(one,tx));return[`tg(x + ${ang})`,`tg(x + ${ang}) = (tg x + 1) / (1 − tg x) = ((${fs(tx)}) + 1) / (1 − (${fs(tx)})) = ${fs(v)}`,'Fórmula de la tangente de una suma, con tg 45° = 1.',fs(v)];},
+    tgd:()=>{const v=rdv(rsb(tx,one),rsb(one,rm(tx,mneg)));return[`tg(x − ${ang})`,`tg(x − ${ang}) = (tg x − 1) / (1 + tg x) = ((${fs(tx)}) − 1) / (1 + (${fs(tx)})) = ${fs(v)}`,'Fórmula de la tangente de una diferencia, con tg 45° = 1.',fs(v)];}
+  };
+  const nm={sen2:'sen 2x',cos2:'cos 2x',tg2:'tg 2x',senh:'sen(x/2)',cosh:'cos(x/2)',tgh:'tg(x/2)',tgs:`tg(x + ${ang})`,tgd:`tg(x − ${ang})`},res=pick.map(t=>it[t]());
+  return{q:`Sabiendo que ${fn} x = ${val} y que ${iv}, calcula, sin calculadora, el valor de ${pick.map(t=>nm[t]).join(', ')}.`,steps:[
+    ['Determinamos el cuadrante de x',`${fn} x = ${val} y ${iv} → x está en el ${Qn} cuadrante`,`El signo de ${fn} x deja solo uno de los cuadrantes que permite el intervalo.`],
+    ['Calculamos las otras razones de x',`sen x = ${fs(sx)},  cos x = ${fs(cx)},  tg x = ${fs(tx)}`,'Se obtienen con sen²x + cos²x = 1 y tg x = sen x / cos x, tomando el signo que corresponde al cuadrante.'],
+    ...res.map(r=>['Calculamos '+r[0],r[1],r[2]]),
+    ['Resultado','<b>'+res.map(r=>r[0]+' = '+r[3]).join(';  ')+'</b>','Los signos se han razonado con el cuadrante.']]};
+};
+T.teq1=function(){
+  const f=Math.random()<.5?'cos':'sen',g=f==='cos'?'sen':'cos',k=Math.random()<.5?1:-1,sg=k>0?'−':'+';
+  const s1=f==='cos'?[90,270]:[0,180],s2=f==='cos'?(k>0?[30,150]:[210,330]):(k>0?[60,300]:[120,240]),all=[...s1,...s2].sort((a,b)=>a-b);
+  return{q:`Resuelve en [0°, 360°): sen 2x = ${k>0?'':'−'}${f} x`,steps:[
+    ['Desarrollamos el seno del ángulo doble',`sen 2x = 2·sen x·cos x → 2·sen x·cos x = ${k>0?'':'−'}${f} x`,'Para trabajar con razones de x (y no de 2x) usamos la fórmula del ángulo doble.'],
+    ['Pasamos todo a un miembro y sacamos factor común',`2·sen x·cos x ${sg} ${f} x = 0 → ${f} x·(2·${g} x ${sg} 1) = 0`,'No se debe dividir entre la razon trigonométrica: se perderían soluciones. Se saca factor común.'],
+    ['Igualamos cada factor a 0',`${f} x = 0 → x = ${lstA(s1)}<br>2·${g} x ${sg} 1 = 0 → ${g} x = ${k>0?'1/2':'−1/2'} → x = ${lstA(s2)}`,'Un producto vale 0 cuando algún factor vale 0.'],
+    ['Resultado',`<b>x = ${lstA(all)}</b>`,'Son las soluciones en una vuelta; las demás se obtienen sumando 360°·k.']]};
+};
+T.teq2=function(){
+  const P=[[.5,-1],[.5,1],[-.5,1],[-.5,-1],[0,.5],[0,-.5],[0,1],[0,-1],[1,-1]],[r1,r2]=P[ri(0,8)],B=Math.round(-2*(r1+r2)),C=Math.round(2*r1*r2),vr=Math.random()<.5?'cos':'sen',Q=quad(2,B,C,'t'),xs=[];
+  const bt=B?tm(B,vr+' x'):'',eq=vr==='cos'?`cos 2x${bt}${C+1?ss(C+1):''} = 0`:`cos 2x${B?tm(-B,'sen x'):''}${C+1?ss(-(C+1)):''} = 0`;
+  const ln=Q.sols.map(s=>{const a=TBL[vr][s.s.replace('−','-')];xs.push(...a);return `${vr} x = ${s.s} → x = ${lstA(a)}`;});
+  return{q:`Resuelve en [0°, 360°): ${eq}`,steps:[
+    ['Escribimos cos 2x con una sola razón',vr==='cos'?'cos 2x = 2cos²x − 1':'cos 2x = 1 − 2sen²x','Elegimos la fórmula que deja toda la ecuación en función de '+vr+' x.'],
+    ['Sustituimos y ordenamos',`2${vr}²x${B?tm(B,vr+' x'):''}${C?ss(C):''} = 0`,'Se agrupan los términos semejantes y se ordena de mayor a menor grado.'],
+    ['Hacemos el cambio de variable',`t = ${vr} x → 2t²${B?tm(B,'t'):''}${C?ss(C):''} = 0`,'Queda una ecuación de 2.º grado en t.'],
+    ...Q.st,
+    ['Deshacemos el cambio',ln.join('<br>'),'Para cada valor de t se buscan los ángulos con ese '+(vr==='sen'?'seno':'coseno')+' en una vuelta.'],
+    ['Resultado',`<b>x = ${lstA(xs.sort((a,b)=>a-b))}</b>`,'Todas las soluciones en [0°, 360°).']]};
+};
+T.teq3=function(){
+  const f=Math.random()<.5?'sen':'cos',k=Math.random()<.5?1:-1,rs=f==='sen'?(k>0?[45,135]:[225,315]):(k>0?[45,315]:[135,225]),val=(k>0?'':'−')+'√2/2',pl=f==='sen'?'+':'−',mn=f==='sen'?'−':'+',o=f==='sen'?'cos':'sen';
+  return{q:`Resuelve en [0°, 360°): ${f}(x + 45°) + ${f}(x − 45°) = ${k>0?'1':'−1'}`,steps:[
+    ['Desarrollamos con las fórmulas de la suma y la diferencia',`${f}(x + 45°) = ${f} x·cos 45° ${pl} ${o} x·sen 45°<br>${f}(x − 45°) = ${f} x·cos 45° ${mn} ${o} x·sen 45°`,'Se aplican las fórmulas del '+(f==='sen'?'seno':'coseno')+' de una suma y de una diferencia.'],
+    ['Sumamos las dos expresiones',`2·${f} x·cos 45° = 2·${f} x·√2/2 = √2·${f} x`,'Los términos con '+o+' x se anulan al sumar.'],
+    ['Despejamos la razón',`√2·${f} x = ${k>0?'1':'−1'} → ${f} x = ${k>0?'':'−'}1/√2 = ${val}`,'Se racionaliza: 1/√2 = √2/2.'],
+    ['Buscamos los ángulos',`${f} x = ${val} → x = ${lstA(rs)}`,'Son los ángulos de [0°, 360°) con ese valor.'],
+    ['Resultado',`<b>x = ${lstA(rs)}</b>`,'Las demás soluciones se obtienen sumando 360°·k.']]};
+};
+T.teq4=function(){
+  const k=ri(0,2);
+  if(k===0)return{q:'Resuelve en [0°, 360°): cos x·sen 2x − sen x = 0',steps:[['Desarrollamos sen 2x','cos x·2·sen x·cos x − sen x = 0 → 2·sen x·cos²x − sen x = 0','Se usa sen 2x = 2·sen x·cos x.'],['Sacamos factor común sen x','sen x·(2cos²x − 1) = 0 → sen x·cos 2x = 0','Como 2cos²x − 1 = cos 2x, el segundo factor es un coseno del ángulo doble.'],['Igualamos cada factor a 0','sen x = 0 → x = 0°, x = 180°<br>cos 2x = 0 → 2x = 90° + 180°·k → x = 45°, x = 135°, x = 225°, x = 315°','Para cos 2x = 0 se resuelve 2x y después se divide entre 2, incluyendo todas las vueltas de 2x.'],['Resultado','<b>x = 0°, 45°, 135°, 180°, 225°, 315°</b>','Soluciones en [0°, 360°).']]};
+  if(k===1){const Q=quad(1,3,2,'t');return{q:'Resuelve en [0°, 360°): cos³x − 3·cos x = 3·cos x·sen x',steps:[['Pasamos todo a un miembro y sacamos factor común cos x','cos x·(cos²x − 3 − 3·sen x) = 0','No se divide entre cos x: se sacaría factor común para no perder soluciones.'],['Escribimos cos²x = 1 − sen²x en el segundo factor','1 − sen²x − 3 − 3·sen x = 0 → sen²x + 3·sen x + 2 = 0','Así el segundo factor queda solo en función de sen x.'],['Hacemos el cambio de variable','t = sen x → t² + 3t + 2 = 0','Queda una ecuación de 2.º grado en t.'],...Q.st,['Deshacemos el cambio y resolvemos el otro factor','sen x = −1 → x = 270°<br>sen x = −2 → imposible: el seno está entre −1 y 1<br>cos x = 0 → x = 90°, x = 270°','Una solución de t fuera de [−1, 1] se descarta.'],['Resultado','<b>x = 90°, 270°</b>','Soluciones en [0°, 360°).']]};}
+  return{q:'Resuelve en [0°, 360°): sen 2x + cos 2x − 1 = cos x − 2·sen²x',steps:[['Desarrollamos los ángulos dobles','2·sen x·cos x + (1 − 2·sen²x) − 1 = cos x − 2·sen²x','Se usa sen 2x = 2·sen x·cos x y cos 2x = 1 − 2·sen²x (la que deja sen²x como en el segundo miembro).'],['Simplificamos','2·sen x·cos x − 2·sen²x = cos x − 2·sen²x → 2·sen x·cos x = cos x','Se cancelan 1 y −1, y −2sen²x en los dos miembros.'],['Pasamos todo a un miembro y sacamos factor común','2·sen x·cos x − cos x = 0 → cos x·(2·sen x − 1) = 0','No se divide entre cos x para no perder soluciones.'],['Igualamos cada factor a 0','cos x = 0 → x = 90°, x = 270°<br>2·sen x − 1 = 0 → sen x = 1/2 → x = 30°, x = 150°','Un producto vale 0 cuando algún factor vale 0.'],['Resultado','<b>x = 30°, 90°, 150°, 270°</b>','Soluciones en [0°, 360°).']]};
+};
+const DM=[
+['(cos x) / (1 − sen x) + (1 + sen x) / (cos x) = (1 + cos 2x) / (cos x − (1/2)·sen 2x)',[['Sumamos las fracciones del miembro izquierdo','(cos²x + (1 + sen x)·(1 − sen x)) / ((1 − sen x)·cos x)','Se reducen a denominador común multiplicando en cruz.'],['Simplificamos el numerador','cos²x + 1 − sen²x = 2cos²x → 2cos²x / ((1 − sen x)·cos x) = 2·cos x / (1 − sen x)','Como 1 − sen²x = cos²x, el numerador es 2cos²x; después se simplifica un cos x.'],['Trabajamos el miembro derecho','1 + cos 2x = 2cos²x  y  (1/2)·sen 2x = sen x·cos x','Se usan cos 2x = 2cos²x − 1 y sen 2x = 2·sen x·cos x.'],['Sacamos factor común y simplificamos','2cos²x / (cos x − sen x·cos x) = 2cos²x / (cos x·(1 − sen x)) = 2·cos x / (1 − sen x)','Se saca cos x factor común del denominador y se simplifica.'],['Los dos miembros coinciden','2·cos x / (1 − sen x) = 2·cos x / (1 − sen x)  ✓','La igualdad queda demostrada.']]],
+['2·(cos²(x/2) − (1/2)·cos x) = 1',[['Partimos del miembro izquierdo','2·(cos²(x/2) − (1/2)·cos x)','Se trabaja un solo miembro hasta llegar al otro.'],['Aplicamos la fórmula del ángulo mitad','cos²(x/2) = (1 + cos x) / 2','Es el cuadrado de cos(x/2) = ±√((1 + cos x) / 2): desaparece la raíz.'],['Sustituimos y simplificamos','2·((1 + cos x) / 2 − cos x / 2) = (1 + cos x) − cos x = 1','El 2 multiplica a cada fracción y se cancelan los cos x.'],['Hemos llegado al miembro derecho','1 = 1  ✓','La igualdad queda demostrada.']]],
+['sen(x + y)·sen(x − y) = sen²x − sen²y',[['Desarrollamos con las fórmulas de la suma y la diferencia','sen(x + y) = sen x·cos y + cos x·sen y<br>sen(x − y) = sen x·cos y − cos x·sen y','Son las fórmulas del seno de una suma y de una diferencia.'],['Multiplicamos: suma por diferencia','(sen x·cos y)² − (cos x·sen y)² = sen²x·cos²y − cos²x·sen²y','(a + b)(a − b) = a² − b².'],['Sustituimos cos² = 1 − sen²','sen²x·(1 − sen²y) − (1 − sen²x)·sen²y','Así todo queda en función de sen²x y sen²y.'],['Desarrollamos y simplificamos','sen²x − sen²x·sen²y − sen²y + sen²x·sen²y = sen²x − sen²y  ✓','Los términos con sen²x·sen²y se cancelan y se llega al segundo miembro.']]],
+['((sen x + cos x)·cos 2x) / (cos x − sen x) = 1 + sen 2x',[['Factorizamos cos 2x','cos 2x = cos²x − sen²x = (cos x − sen x)·(cos x + sen x)','Es una diferencia de cuadrados.'],['Sustituimos y simplificamos el factor común','((sen x + cos x)·(cos x − sen x)·(cos x + sen x)) / (cos x − sen x) = (sen x + cos x)²','Se cancela (cos x − sen x) del numerador y del denominador.'],['Desarrollamos el cuadrado','sen²x + 2·sen x·cos x + cos²x = 1 + sen 2x  ✓','Se usan sen²x + cos²x = 1 y 2·sen x·cos x = sen 2x.']]],
+['(2·sen x) / (tg 2x) + (sen²x) / (cos x) = cos x',[['Expresamos tg 2x con senos y cosenos','tg 2x = sen 2x / cos 2x → 2·sen x / tg 2x = 2·sen x·cos 2x / sen 2x','Dividir entre una fracción es multiplicar por su inversa.'],['Sustituimos sen 2x y simplificamos','(2·sen x·cos 2x) / (2·sen x·cos x) = cos 2x / cos x','Se usa sen 2x = 2·sen x·cos x y se cancela 2·sen x.'],['Sumamos las fracciones','cos 2x / cos x + sen²x / cos x = (cos 2x + sen²x) / cos x','Tienen el mismo denominador.'],['Aplicamos cos 2x = cos²x − sen²x','(cos²x − sen²x + sen²x) / cos x = cos²x / cos x = cos x  ✓','Se cancelan sen²x y −sen²x y se simplifica un cos x.']]],
+['(sen x + cos x)² = 1 + sen 2x',[['Desarrollamos el cuadrado','(sen x + cos x)² = sen²x + 2·sen x·cos x + cos²x','(a + b)² = a² + 2ab + b².'],['Aplicamos las identidades','sen²x + cos²x = 1  y  2·sen x·cos x = sen 2x','Identidad fundamental y fórmula del ángulo doble.'],['Llegamos al segundo miembro','1 + sen 2x  ✓','La igualdad queda demostrada.']]],
+['tg x + 1/tg x = 2 / sen 2x',[['Escribimos la tangente como seno entre coseno','sen x / cos x + cos x / sen x','tg x = sen x / cos x.'],['Sumamos las fracciones','(sen²x + cos²x) / (sen x·cos x) = 1 / (sen x·cos x)','Común denominador y sen²x + cos²x = 1.'],['Multiplicamos arriba y abajo por 2','1 / (sen x·cos x) = 2 / (2·sen x·cos x) = 2 / sen 2x  ✓','Así aparece sen 2x = 2·sen x·cos x en el denominador.']]],
+['sen 2x / (1 + cos 2x) = tg x',[['Aplicamos las fórmulas del ángulo doble','sen 2x = 2·sen x·cos x  y  1 + cos 2x = 2cos²x','Con cos 2x = 2cos²x − 1 el 1 se cancela.'],['Sustituimos y simplificamos','(2·sen x·cos x) / (2cos²x) = sen x / cos x = tg x  ✓','Se cancela 2·cos x del numerador y del denominador.']]],
+['1 / (1 − cos x) + 1 / (1 + cos x) = 2 / sen²x',[['Sumamos las fracciones','((1 + cos x) + (1 − cos x)) / ((1 − cos x)·(1 + cos x))','Denominador común: el producto de los dos denominadores.'],['Simplificamos','2 / (1 − cos²x)','En el numerador se cancela cos x y en el denominador es suma por diferencia.'],['Aplicamos la identidad fundamental','1 − cos²x = sen²x → 2 / sen²x  ✓','sen²x + cos²x = 1.']]],
+['cos(x + y)·cos(x − y) = cos²x − sen²y',[['Desarrollamos con las fórmulas de la suma y la diferencia','cos(x + y) = cos x·cos y − sen x·sen y<br>cos(x − y) = cos x·cos y + sen x·sen y','Son las fórmulas del coseno de una suma y de una diferencia.'],['Multiplicamos: diferencia por suma','(cos x·cos y)² − (sen x·sen y)² = cos²x·cos²y − sen²x·sen²y','(a − b)(a + b) = a² − b².'],['Sustituimos cos²y = 1 − sen²y y sen²x = 1 − cos²x','cos²x·(1 − sen²y) − (1 − cos²x)·sen²y = cos²x − cos²x·sen²y − sen²y + cos²x·sen²y = cos²x − sen²y  ✓','Los términos con cos²x·sen²y se cancelan.']]],
+['sen 3x = 3·sen x − 4·sen³x',[['Descomponemos 3x = 2x + x','sen 3x = sen(2x + x) = sen 2x·cos x + cos 2x·sen x','Fórmula del seno de una suma.'],['Aplicamos las fórmulas del ángulo doble','2·sen x·cos²x + (1 − 2·sen²x)·sen x','sen 2x = 2·sen x·cos x y cos 2x = 1 − 2·sen²x.'],['Sustituimos cos²x = 1 − sen²x y simplificamos','2·sen x·(1 − sen²x) + sen x − 2·sen³x = 3·sen x − 4·sen³x  ✓','Al desarrollar quedan 2sen x − 2sen³x + sen x − 2sen³x.']]]
+];
+T.demo=function(){const e=DM[ri(0,DM.length-1)];return{q:`Demuestra que: ${e[0]}`,steps:e[1]};};
+GR.trig.push(['Fórmulas trigonométricas con el cuadrante',[['fcuad','Ángulo doble, mitad y suma con el cuadrante']]],['Ecuaciones trigonométricas con fórmulas',[['teq1','Factor común con ángulo doble'],['teq2','Ecuación de 2.º grado con cos 2x'],['teq3','Suma de ángulos (±45°)'],['teq4','Ecuaciones variadas']]],['Demostrar igualdades trigonométricas',[['demo','Demostrar igualdades']]]);
+GR.trig.sort(srt);GR.trig.forEach(f=>f[1].sort(srt));
+function fig(S,L,o={}){
+  const{a,b,c}=S,K=['A','B','C'],cA=(b*b+c*c-a*a)/(2*b*c),sA=Math.sqrt(Math.max(0,1-cA*cA));
+  const P={A:[0,0],B:[c,0],C:[b*cA,-b*sA]},W=300,H=190,TW=s=>String(s).length*6.8;
+  const xs=K.map(k=>P[k][0]),ys=K.map(k=>P[k][1]),cx=(Math.min(...xs)+Math.max(...xs))/2,cy=(Math.min(...ys)+Math.max(...ys))/2,w0=Math.max(...xs)-Math.min(...xs)||1,h0=Math.max(...ys)-Math.min(...ys)||1;
+  const nm=v=>{const l=Math.hypot(v[0],v[1])||1;return[v[0]/l,v[1]/l];};
+  const lay=sc=>{
+    const Q={},labs=[];
+    K.forEach(k=>{Q[k]=[(P[k][0]-cx)*sc,(P[k][1]-cy)*sc];});
+    [['a','B','C','A'],['b','C','A','B'],['c','A','B','C']].forEach(([key,u,v,op])=>{
+      const s=L[key];if(!s)return;
+      const mx=(Q[u][0]+Q[v][0])/2,my=(Q[u][1]+Q[v][1])/2;let [nx,ny]=nm([-(Q[v][1]-Q[u][1]),Q[v][0]-Q[u][0]]);
+      if((Q[op][0]-mx)*nx+(Q[op][1]-my)*ny>0){nx=-nx;ny=-ny;}
+      const w=TW(s),off=7+w/2*Math.abs(nx)+7*Math.abs(ny);
+      labs.push({x:mx+nx*off,y:my+ny*off,s,w,cl:''});
+    });
+    K.forEach((k,i)=>{
+      const u=K[(i+1)%3],v=K[(i+2)%3],e1=nm([Q[u][0]-Q[k][0],Q[u][1]-Q[k][1]]),e2=nm([Q[v][0]-Q[k][0],Q[v][1]-Q[k][1]]),bs=nm([e1[0]+e2[0],e1[1]+e2[1]]);
+      const th=Math.acos(Math.max(-1,Math.min(1,e1[0]*e2[0]+e1[1]*e2[1]))),l1=Math.hypot(Q[u][0]-Q[k][0],Q[u][1]-Q[k][1]),l2=Math.hypot(Q[v][0]-Q[k][0],Q[v][1]-Q[k][1]),tb=2*l1*l2*Math.cos(th/2)/(l1+l2);
+      let extra=0;const ag=L['g'+k];
+      if(ag){
+        const w=TW(ag),r=Math.max(o.right===k?26:20,(w+8)/(2*Math.tan(th/2)));
+        if(r<=tb*.8)labs.push({x:Q[k][0]+bs[0]*r,y:Q[k][1]+bs[1]*r,s:ag,w,cl:''});
+        else{const ext=w/2*Math.abs(bs[0])+7*Math.abs(bs[1]),d0=8+ext;labs.push({x:Q[k][0]-bs[0]*d0,y:Q[k][1]-bs[1]*d0,s:ag,w,cl:''});extra=d0+ext;}
+      }
+      const nk=L[k];
+      if(nk){const w=TW(nk),d1=(extra?extra+6:10)+w/2*Math.abs(bs[0])+7*Math.abs(bs[1]);labs.push({x:Q[k][0]-bs[0]*d1,y:Q[k][1]-bs[1]*d1,s:nk,w,cl:'v'});}
+    });
+    if(o.alt&&L.w){const fx=Q.C[0],fy=Q.A[1],w=TW(L.w),md=Q.C[1]+.72*(fy-Q.C[1]),rs=Q.B[0]-fx,ls=fx-Q.A[0];labs.push({x:rs>=ls?fx+6+w/2:fx-6-w/2,y:md,s:L.w,w,cl:''});}
+    for(let it=0;it<14;it++){
+      let moved=false;
+      for(let i=0;i<labs.length;i++)for(let j=i+1;j<labs.length;j++){
+        const A=labs[i],B=labs[j],ox=(A.w+B.w)/2+2-Math.abs(A.x-B.x),oy=14-Math.abs(A.y-B.y);
+        if(ox>0&&oy>0){moved=true;if(oy<=ox){const sg=A.y<=B.y?-1:1;A.y+=sg*oy/2;B.y-=sg*oy/2;}else{const sg=A.x<=B.x?-1:1;A.x+=sg*ox/2;B.x-=sg*ox/2;}}
+      }
+      if(!moved)break;
+    }
+    let x1=Math.min(...K.map(k=>Q[k][0])),x2=Math.max(...K.map(k=>Q[k][0])),y1=Math.min(...K.map(k=>Q[k][1])),y2=Math.max(...K.map(k=>Q[k][1]));
+    labs.forEach(l=>{x1=Math.min(x1,l.x-l.w/2);x2=Math.max(x2,l.x+l.w/2);y1=Math.min(y1,l.y-8);y2=Math.max(y2,l.y+8);});
+    return{Q,labs,x1,x2,y1,y2};
+  };
+  let sc=Math.min((W-24)/w0,(H-24)/h0),R=lay(sc);
+  for(let i=0;i<40&&(R.x2-R.x1>W-8||R.y2-R.y1>H-8);i++){sc*=.93;R=lay(sc);}
+  const sx=W/2-(R.x1+R.x2)/2,sy=H/2-(R.y1+R.y2)/2,Q={};
+  K.forEach(k=>{Q[k]=[R.Q[k][0]+sx,R.Q[k][1]+sy];});
+  const f1=z=>z.toFixed(1);
+  let s=`<svg viewBox='0 0 ${W} ${H}' class='fg'><polygon class='tr' points='${K.map(k=>Q[k].map(f1).join(',')).join(' ')}'/>`;
+  if(o.right){
+    const V=Q[o.right],[u,r]=K.filter(k=>k!==o.right).map(k=>{const dx=Q[k][0]-V[0],dy=Q[k][1]-V[1],l=Math.hypot(dx,dy)||1;return[dx/l*11,dy/l*11];});
+    s+=`<polyline class='ra' points='${f1(V[0]+u[0])},${f1(V[1]+u[1])} ${f1(V[0]+u[0]+r[0])},${f1(V[1]+u[1]+r[1])} ${f1(V[0]+r[0])},${f1(V[1]+r[1])}'/>`;
+  }
+  if(o.alt)s+=`<line class='da' x1='${f1(Q.C[0])}' y1='${f1(Q.C[1])}' x2='${f1(Q.C[0])}' y2='${f1(Q.A[1])}'/>`;
+  R.labs.forEach(l=>{s+=`<text x='${f1(l.x+sx)}' y='${f1(l.y+sy+4)}' text-anchor='middle' class='${l.cl||(String(l.s).includes('?')?'u':'')}'>${l.s}</text>`;});
+  return s+'</svg>';
+}
+T.rcomplejo=function(){
+  const al=ri(20,40),be=ri(al+8,60),dd=ri(10,60),k=1/tg(al)-1/tg(be),h=dd/k,x=h/tg(be);
+  const dr=lh=>{
+    const sc=Math.min(150/(x+dd),75/h),Qx=200,by=115,P2=Qx-x*sc,P1=Qx-(x+dd)*sc,Tp=by-h*sc,f1=z=>z.toFixed(1);
+    const t=(X,Y,s,cl,an)=>`<text x='${f1(X)}' y='${f1(Y+4)}' text-anchor='${an||'middle'}' class='${cl||(String(s).includes('?')?'u':'')}'>${s}</text>`;
+    const inAng=(px,th,l1,l2,s)=>{const w=String(s).length*6.8,r=Math.max(20,(w+8)/(2*Math.tan(th/2))),tb=2*l1*l2*Math.cos(th/2)/(l1+l2);return r<=tb*.8?[px+Math.cos(th/2)*r,by-Math.sin(th/2)*r]:null;};
+    const aT=`α = ${al}°`,bT=`β = ${be}°`,rad=Math.PI/180;
+    const pa=inAng(P1,al*rad,(x+dd)*sc,Math.hypot((x+dd)*sc,h*sc),aT),pb=inAng(P2,be*rad,x*sc,Math.hypot(x*sc,h*sc),bT);
+    let s=`<svg viewBox='0 0 300 190' class='fg'><polygon class='tr' points='${f1(P1)},${by} ${Qx},${by} ${Qx},${f1(Tp)}'/><line class='da' x1='${f1(P2)}' y1='${by}' x2='${Qx}' y2='${f1(Tp)}'/><polyline class='ra' points='${Qx-10},${by} ${Qx-10},${by-10} ${Qx},${by-10}'/>`;
+    s+=pa?t(pa[0],pa[1],aT):t(P1,by+16,aT);
+    s+=pb?t(pb[0],pb[1],bT):t(P2,by+(pa?16:32),bT);
+    s+=`<line class='da' x1='${f1(P1)}' y1='${by+50}' x2='${f1(P2)}' y2='${by+50}'/>`+t((P1+P2)/2,by+62,`${dd} m`);
+    s+=t(Qx+8,(by+Tp)/2,lh,'','start');
+    return s+'</svg>';
+  };
+  return{q:`Desde dos puntos alineados con la base de una torre y separados ${dd} m, se ve su cima con ángulos de elevación de ${al}° (el punto más lejano) y ${be}° (el más cercano). ¿Qué altura tiene la torre?`,fq:dr('h = ?'),fs:dr(`h = ${f(h)} m`),steps:[['Planteamos dos triángulos rectángulos',`Punto cercano: tg ${be}° = h / x<br>Punto lejano: tg ${al}° = h / (x + ${dd})`,'Hay dos incógnitas, h y la distancia x del punto cercano a la base. Cada observación da una ecuación.'],['Despejamos la distancia en las dos',`x = h / tg ${be}°<br>x + ${dd} = h / tg ${al}°`,'Se despeja el cateto contiguo en cada triángulo.'],['Restamos las dos ecuaciones',`${dd} = h/tg ${al}° − h/tg ${be}° = h·(${f(1/tg(al))} − ${f(1/tg(be))})`,'Al restar desaparece x y queda una ecuación con solo h.'],['Despejamos h',`h = ${dd} / ${f(k)} = ${f(h)} m`,'Se divide entre el factor que multiplica a h.'],['Resultado',`<b>La torre mide ≈ ${f(h)} m</b>`,'Respuesta con su unidad.']]};
+};
+BL.geo=['Geometría analítica',[]];BL.ana=['Análisis',[]];
+GR.geo=[
+['Vectores del plano',[['vecop','Operaciones y módulo'],['vecang','Producto escalar y ángulo']]],
+['Ecuaciones de la recta',[['recta','Ecuaciones de la recta']]],
+['Posición relativa y ángulo entre rectas',[['posrel','Posición relativa y ángulo entre rectas']]],
+['Distancias en el plano',[['dpp','Entre dos puntos'],['dpr','De un punto a una recta'],['drr','Entre rectas paralelas']]],
+['Lugares geométricos y simetrías',[['mediatriz','Mediatriz de un segmento'],['simpunto','Simétrico respecto de un punto'],['simrecta','Simétrico respecto de una recta']]],
+['Circunferencia y elipse',[['circ','Circunferencia: centro y radio'],['elipse','Elipse: elementos']]]];
+GR.ana=[
+['Límites',[['limx','En un punto'],['liminf','En el infinito']]],
+['Asíntotas',[['asin','Asíntotas']]],
+['Continuidad',[['cont','Continuidad']]],
+['Derivadas',[['deriv','Derivadas']]],
+['Recta tangente y normal',[['tang','Recta tangente y normal']]],
+['Monotonía y extremos',[['extr','Monotonía y extremos']]]];
+[GR.geo,GR.ana].forEach(g=>{g.sort(srt);g.forEach(f=>f[1].sort(srt));});
+fig=function(S,L,o={}){
+  const{a,b,c}=S,K=['A','B','C'],W=300,H=190;
+  const cA=(b*b+c*c-a*a)/(2*b*c),sA=Math.sqrt(Math.max(0,1-cA*cA)),P={A:[0,0],B:[c,0],C:[b*cA,-b*sA]};
+  const TW=(s,bo)=>String(s).length*(bo?8.8:8)+4,TH=14,GP=5;
+  const un=v=>{const l=Math.hypot(v[0],v[1])||1;return[v[0]/l,v[1]/l];},sp=(n,w,h)=>Math.abs(n[0])*w/2+Math.abs(n[1])*h/2,cr=(x,y)=>x[0]*y[1]-x[1]*y[0];
+  const lay=sc=>{
+    const V={},dir={},bis={},half={},it=[],out={};
+    K.forEach(k=>{V[k]=[P[k][0]*sc,P[k][1]*sc];});
+    K.forEach(k=>{const [o1,o2]=K.filter(z=>z!==k),d1=un([V[o1][0]-V[k][0],V[o1][1]-V[k][1]]),d2=un([V[o2][0]-V[k][0],V[o2][1]-V[k][1]]);dir[k]=[d1,d2];bis[k]=un([d1[0]+d2[0],d1[1]+d2[1]]);half[k]=Math.acos(Math.max(-1,Math.min(1,d1[0]*d2[0]+d1[1]*d2[1])))/2;});
+    const add=(s,cls,cx,cy,w,pr)=>it.push({s,cls,cx,cy,w,h:TH,pr});
+    [[L.a,'B','C','A'],[L.b,'C','A','B'],[L.c,'A','B','C']].forEach(([s,u,v,opp])=>{
+      if(!s)return;
+      const m=[(V[u][0]+V[v][0])/2,(V[u][1]+V[v][1])/2],e=un([V[v][0]-V[u][0],V[v][1]-V[u][1]]);let n=[-e[1],e[0]];
+      if(n[0]*(m[0]-V[opp][0])+n[1]*(m[1]-V[opp][1])<0)n=[-n[0],-n[1]];
+      const w=TW(s),dd=GP+sp(n,w,TH);add(s,String(s).includes('?')?'u':'',m[0]+n[0]*dd,m[1]+n[1]*dd,w,2);
+    });
+    K.forEach(k=>{
+      const s=L['g'+k];if(!s)return;
+      const [o1,o2]=K.filter(z=>z!==k),[d1,d2]=dir[k],w=TW(s),hf=Math.max(half[k],.05),B2=bis[k];
+      const n1=[-d1[1],d1[0]],n2=[-d2[1],d2[0]],need=Math.max((GP+sp(n1,w,TH))/Math.sin(hf),(GP+sp(n2,w,TH))/Math.sin(hf),20);
+      const p1=V[o1],p2=V[o2],sg=[p2[0]-p1[0],p2[1]-p1[1]],qp=[p1[0]-V[k][0],p1[1]-V[k][1]],den=cr(B2,sg),tI=Math.abs(den)>1e-9?cr(qp,sg)/den:Infinity,rmax=tI-(GP+sp(B2,w,TH));
+      const q=String(s).includes('?')?'u':'';
+      if(need<=rmax)add(s,q,V[k][0]+B2[0]*need,V[k][1]+B2[1]*need,w,3);
+      else{const r0=GP+sp(B2,w,TH);add(s,q,V[k][0]-B2[0]*r0,V[k][1]-B2[1]*r0,w,3);out[k]=1;}
+    });
+    K.forEach(k=>{
+      const s=L[k];if(!s)return;
+      const w=TW(s,1);let n=[-bis[k][0],-bis[k][1]];
+      if(out[k])n=un([-dir[k][0][0]-dir[k][1][0]*.0,-dir[k][0][1]]);
+      const dd=3+sp(n,w,TH);add(s,'v',V[k][0]+n[0]*dd,V[k][1]+n[1]*dd,w,1);
+    });
+    if(o.alt&&L.w){
+      const F=[V.C[0],V.A[1]],ym=(V.C[1]+F[1])/2,xs=(p,q2)=>p[0]+(q2[0]-p[0])*(ym-p[1])/(q2[1]-p[1]),xr=xs(V.C,V.B),xl=xs(V.C,V.A),w=TW(L.w),right=(xr-F[0])>=(F[0]-xl);
+      add(L.w,String(L.w).includes('?')?'u':'',F[0]+(right?1:-1)*(5+w/2),ym,w,4);
+    }
+    for(let r=0;r<40;r++){
+      let mv=0;
+      for(let i=0;i<it.length;i++)for(let j=i+1;j<it.length;j++){
+        const A1=it[i],B1=it[j],ox=Math.min(A1.cx+A1.w/2,B1.cx+B1.w/2)-Math.max(A1.cx-A1.w/2,B1.cx-B1.w/2)+1,oy=Math.min(A1.cy+A1.h/2,B1.cy+B1.h/2)-Math.max(A1.cy-A1.h/2,B1.cy-B1.h/2)+1;
+        if(ox>0&&oy>0){const m1=A1.pr<=B1.pr?A1:B1,s1=m1===A1?B1:A1;if(ox<oy)m1.cx+=(m1.cx>=s1.cx?1:-1)*ox;else m1.cy+=(m1.cy>=s1.cy?1:-1)*oy;mv=1;}
+      }
+      if(!mv)break;
+    }
+    return{V,it};
+  };
+  const xs0=K.map(k=>P[k][0]),ys0=K.map(k=>P[k][1]),tw0=Math.max(...xs0)-Math.min(...xs0)||1,th0=Math.max(...ys0)-Math.min(...ys0)||1;
+  let sc=Math.min((W-16)/tw0,(H-16)/th0),R,bb;
+  for(let t=0;t<40;t++){
+    R=lay(sc);
+    const xs=[...K.map(k=>R.V[k][0]),...R.it.flatMap(i=>[i.cx-i.w/2,i.cx+i.w/2])],ys=[...K.map(k=>R.V[k][1]),...R.it.flatMap(i=>[i.cy-i.h/2,i.cy+i.h/2])];
+    bb=[Math.min(...xs),Math.max(...xs),Math.min(...ys),Math.max(...ys)];
+    if(bb[1]-bb[0]<=W-8&&bb[3]-bb[2]<=H-8)break;
+    sc*=.94;
+  }
+  const dx=(W-(bb[1]-bb[0]))/2-bb[0],dy=(H-(bb[3]-bb[2]))/2-bb[2],Q={};
+  K.forEach(k=>{Q[k]=[R.V[k][0]+dx,R.V[k][1]+dy];});
+  let s=`<svg viewBox='0 0 ${W} ${H}' class='fg'><polygon class='tr' points='${K.map(k=>Q[k].map(z=>z.toFixed(1)).join(',')).join(' ')}'/>`;
+  if(o.right){
+    const Vr=Q[o.right],[u,r]=K.filter(k=>k!==o.right).map(k=>{const ex=Q[k][0]-Vr[0],ey=Q[k][1]-Vr[1],l=Math.hypot(ex,ey)||1;return[ex/l*11,ey/l*11];});
+    s+=`<polyline class='ra' points='${(Vr[0]+u[0]).toFixed(1)},${(Vr[1]+u[1]).toFixed(1)} ${(Vr[0]+u[0]+r[0]).toFixed(1)},${(Vr[1]+u[1]+r[1]).toFixed(1)} ${(Vr[0]+r[0]).toFixed(1)},${(Vr[1]+r[1]).toFixed(1)}'/>`;
+  }
+  if(o.alt)s+=`<line class='da' x1='${Q.C[0].toFixed(1)}' y1='${Q.C[1].toFixed(1)}' x2='${Q.C[0].toFixed(1)}' y2='${Q.A[1].toFixed(1)}'/>`;
+  R.it.forEach(i=>{s+=`<text x='${(i.cx+dx).toFixed(1)}' y='${(i.cy+dy+3.5).toFixed(1)}' text-anchor='middle' class='${i.cls}'>${i.s}</text>`;});
+  return s+'</svg>';
+};
+T.rcomplejo=function(){
+  const al=ri(20,40),be=ri(al+8,60),dd=ri(10,60),k=1/tg(al)-1/tg(be),h=dd/k,x=h/tg(be);
+  const dr=lh=>{
+    const B0=116,Qx=196,P1x=70,Ty=14,sc=Math.min((Qx-P1x)/(x+dd),(B0-Ty)/h),P1=Qx-(x+dd)*sc,P2=Qx-x*sc,Tp=B0-h*sc;
+    const f1=v=>v.toFixed(1),t=(X,Y,s,c,an)=>`<text x='${f1(X)}' y='${f1(Y)}' text-anchor='${an||'middle'}' class='${c||''}'>${s}</text>`;
+    const near=(P2-P1)<60,mid=(P1+P2)/2;
+    let s=`<svg viewBox='0 0 300 190' class='fg'><polygon class='tr' points='${f1(P1)},${B0} ${Qx},${B0} ${Qx},${f1(Tp)}'/><line class='da' x1='${f1(P2)}' y1='${B0}' x2='${Qx}' y2='${f1(Tp)}'/>`;
+    s+=near?t(mid-3,B0+17,`α = ${al}°`,'','end')+t(mid+3,B0+17,`β = ${be}°`,'','start'):t(P1,B0+17,`α = ${al}°`)+t(P2,B0+17,`β = ${be}°`);
+    s+=`<line class='ra' x1='${f1(P1)}' y1='${B0+28}' x2='${f1(P2)}' y2='${B0+28}'/><line class='ra' x1='${f1(P1)}' y1='${B0+24}' x2='${f1(P1)}' y2='${B0+32}'/><line class='ra' x1='${f1(P2)}' y1='${B0+24}' x2='${f1(P2)}' y2='${B0+32}'/>`+t(mid,B0+47,`${dd} m`,'');
+    s+=t(Qx+8,(B0+Tp)/2+4,lh,lh.includes('?')?'u':'','start');
+    return s+'</svg>';
+  };
+  return{q:`Desde dos puntos alineados con la base de una torre y separados ${dd} m, se ve su cima con ángulos de elevación de ${al}° (el punto más lejano) y ${be}° (el más cercano). ¿Qué altura tiene la torre?`,fq:dr('h = ?'),fs:dr(`h = ${f(h)} m`),steps:[['Planteamos dos triángulos rectángulos',`Punto cercano: tg ${be}° = h / x<br>Punto lejano: tg ${al}° = h / (x + ${dd})`,'Hay dos incógnitas, h y la distancia x del punto cercano a la base. Cada observación da una ecuación.'],['Despejamos la distancia en las dos',`x = h / tg ${be}°<br>x + ${dd} = h / tg ${al}°`,'Se despeja el cateto contiguo en cada triángulo.'],['Restamos las dos ecuaciones',`${dd} = h/tg ${al}° − h/tg ${be}° = h·(${f(1/tg(al))} − ${f(1/tg(be))})`,'Al restar desaparece x y queda una ecuación con solo h.'],['Despejamos h',`h = ${dd} / ${f(k)} = ${f(h)} m`,'Se divide entre el factor que multiplica a h.'],['Resultado',`<b>La torre mide ≈ ${f(h)} m</b>`,'Respuesta con su unidad.']]};
+};
+const HT=['real','rbasico','rcomplejo','isosceles'];
+const stepHTML=(s,k,n,fs)=>`<div class='step'><div class='n'>${k}</div><div class='b'><h3>${mx(s[0])}</h3><div class='m math'>${mx(s[1])}${k===n&&fs?fs:''}</div><p class='w'><b>¿Por qué?</b> ${mx(s[2])}</p></div></div>`;
+let exam=[],exDif=2;
+function buildCats(){
+  $('exCats').innerHTML=Object.keys(GR).map(b=>`<div class='exh'>${BL[b][0]}</div>`+GR[b].map((f,i)=>`<div class='exr'><input type='checkbox' id='c_${b}_${i}'><span>${f[0]}</span><input type='number' min='1' max='10' value='2' id='n_${b}_${i}' disabled></div>`).join('')).join('');
+}
+function genExam(){
+  const seenE=[],out=[];
+  Object.keys(GR).forEach(b=>GR[b].forEach((f,i)=>{
+    if(!$('c_'+b+'_'+i).checked)return;
+    const n=Math.max(1,Math.min(10,+$('n_'+b+'_'+i).value||1));
+    for(let q=0;q<n;q++){
+      const d=exDif||ri(1,3),t=f[1][ri(0,f[1].length-1)][0];let o,tr=0;
+      do{o=T[t](d);tr++;}while(seenE.includes(o.q)&&tr<20);
+      seenE.push(o.q);out.push({o,t,d,f:f[0]});
+    }
+  }));
+  exam=out;renderExam();$('exOut').scrollIntoView({behavior:'smooth',block:'start'});
+}
+function renderExam(){
+  if(!exam.length){$('exOut').innerHTML="<p class='sub' style='margin-top:14px'>Selecciona al menos una categoría.</p>";return;}
+  $('exOut').innerHTML=`<div class='tag' style='margin:18px 0 8px'>Examen · ${exam.length} ejercicios</div><button class='btn o' data-a='all'>Mostrar todas las soluciones</button><div class='exr' style='margin-top:10px'><input type='checkbox' id='exSolPdf'><span>Incluir las soluciones paso a paso en el PDF</span></div><button class='btn' data-a='pdf'>Generar PDF del examen</button><div id='exPrev'></div>`+exam.map((e,i)=>`<div class='ex'><div class='tag'>${i+1}. ${e.f} · ${['Fácil','Media','Difícil'][e.d-1]}</div><div class='math eq'>${mx(e.o.q)}</div>${HT.includes(e.t)&&e.o.fq?`<button class='btn o' data-a='hint' data-i='${i}' style='margin-top:12px'>💡 Pista: ver el dibujo</button><div id='h${i}'></div>`:(e.o.fq||'')}<button class='btn o' data-a='sol' data-i='${i}' style='margin-top:12px'>Ver solución</button><div id='s${i}' class='hid' style='margin-top:12px'>${e.o.steps.map((s,k)=>stepHTML(s,k+1,e.o.steps.length,e.o.fs)).join('')}</div></div>`).join('');
+}
+const PW=794,PH=1123,PSC=2,MG=56,CW=PW-2*MG;
+const FONT=`'Cambria Math','Times New Roman',Georgia,serif`,SANS=`system-ui,-apple-system,'Segoe UI',Arial,sans-serif`,MONO=`ui-monospace,Menlo,Consolas,monospace`;
+const MC=document.createElement('canvas').getContext('2d');
+const lf=(s,sz,o={})=>{const f=`${o.i?'italic ':''}${o.b?'bold ':''}${sz}px ${o.m?MONO:o.s?SANS:FONT}`;MC.font=f;const w=MC.measureText(s).width;return{w,a:sz*.78,d:sz*.25,draw:(c,x,y)=>{c.font=f;c.fillStyle=o.col||'#111';c.fillText(s,x,y);}};};
+const rowB=bs=>({w:bs.reduce((s,b)=>s+b.w,0),a:Math.max(0,...bs.map(b=>b.a)),d:Math.max(0,...bs.map(b=>b.d)),draw:(c,x,y)=>{let p=x;bs.forEach(b=>{b.draw(c,p,y);p+=b.w;});}});
+function mbox(n,sz){
+  const k=n.localName,ch=[...n.children],kids=()=>rowB(ch.map(c=>mbox(c,sz)));
+  if(k==='mi'){const t=n.textContent;return lf(t,sz,{i:t.length===1&&/[A-Za-zα-ω]/.test(t)});}
+  if(k==='mn'||k==='mtext')return lf(n.textContent,sz);
+  if(k==='mo'){const t=n.textContent,sp=/^[+−=±→≈≠×]$/.test(t)?sz*.25:0,b=lf(t,sz);return{w:b.w+2*sp,a:b.a,d:b.d,draw:(c,x,y)=>b.draw(c,x+sp,y)};}
+  if(k==='mspace')return{w:sz*.2,a:0,d:0,draw(){}};
+  if(k==='msup'||k==='msub'){const b=mbox(ch[0],sz),s=mbox(ch[1],sz*.7),dy=k==='msup'?-sz*.42:sz*.2;return{w:b.w+s.w,a:Math.max(b.a,s.a-dy),d:Math.max(b.d,s.d+dy),draw:(c,x,y)=>{b.draw(c,x,y);s.draw(c,x+b.w,y+dy);}};}
+  if(k==='mfrac'){const nu=mbox(ch[0],sz*.9),de=mbox(ch[1],sz*.9),ax=sz*.3,g=sz*.12,w=Math.max(nu.w,de.w)+sz*.3;return{w,a:ax+g+nu.a+nu.d,d:de.a+de.d+g-ax,draw:(c,x,y)=>{nu.draw(c,x+(w-nu.w)/2,y-ax-g-nu.d);de.draw(c,x+(w-de.w)/2,y-ax+g+de.a);c.strokeStyle='#111';c.lineWidth=1;c.beginPath();c.moveTo(x+2,y-ax);c.lineTo(x+w-2,y-ax);c.stroke();}};}
+  if(k==='msqrt'){const b=kids(),p=sz*.62;return{w:b.w+p+2,a:b.a+4,d:b.d,draw:(c,x,y)=>{b.draw(c,x+p,y);c.strokeStyle='#111';c.lineWidth=1.1;c.beginPath();c.moveTo(x+1,y-sz*.3);c.lineTo(x+p*.28,y-sz*.36);c.lineTo(x+p*.55,y+b.d);c.lineTo(x+p,y-b.a-3);c.lineTo(x+p+b.w+1,y-b.a-3);c.stroke();}};}
+  return kids();
+}
+let PG=[],CV,CX,Y,lastPdf=null;
+function newPage(){CV=document.createElement('canvas');CV.width=PW*PSC;CV.height=PH*PSC;CX=CV.getContext('2d');CX.scale(PSC,PSC);CX.fillStyle='#fff';CX.fillRect(0,0,PW,PH);PG.push(CV);Y=MG;}
+const need=h=>{if(Y+h>PH-MG)newPage();};
+function toks(html,sz,o){
+  const body=new DOMParser().parseFromString('<body>'+html+'</body>','text/html').body,out=[];
+  const walk=(n,st)=>{
+    if(n.nodeType===3){n.textContent.split(' ').forEach((w,i)=>{if(i)out.push({sp:1});if(w)out.push({box:lf(w,st.sz,{b:st.b,col:st.col,s:1})});});return;}
+    const k=n.localName;
+    if(k==='br'){out.push({br:1});return;}
+    if(k==='math'){out.push({box:mbox(n,st.sz*1.05)});return;}
+    if(k==='pre'){n.textContent.split(NL).forEach((ln,i)=>{if(i)out.push({br:1});if(ln)out.push({box:lf(ln,st.sz*.95,{m:1})});});return;}
+    if(k==='sup'||k==='sub'){const b=lf(n.textContent,st.sz*.7,{b:st.b,col:st.col,s:1}),dy=k==='sup'?-st.sz*.4:st.sz*.2;out.push({box:{w:b.w,a:b.a-dy,d:b.d+dy,draw:(c,x,y)=>b.draw(c,x,y+dy)}});return;}
+    [...n.childNodes].forEach(c=>walk(c,{...st,b:st.b||k==='b'}));
+  };
+  walk(body,{sz,b:o.b,col:o.col});
+  return out;
+}
+function para(html,sz,o={}){
+  const t=toks(html,sz,o),x0=o.x||MG,W=o.w||CW,sp=sz*.3,lines=[];
+  let cur=[],x=0,gap=0;
+  t.forEach(k=>{
+    if(k.br){lines.push(cur);cur=[];x=0;gap=0;return;}
+    if(k.sp){gap=cur.length?sp:0;return;}
+    if(x+gap+k.box.w>W&&cur.length){lines.push(cur);cur=[];x=0;gap=0;}
+    x+=gap;cur.push({b:k.box,x});x+=k.box.w;gap=0;
+  });
+  lines.push(cur);
+  lines.forEach(l=>{
+    const a=Math.max(sz*.8,...l.map(i=>i.b.a)),d=Math.max(sz*.25,...l.map(i=>i.b.d)),lw=l.length?l[l.length-1].x+l[l.length-1].b.w:0;
+    need(a+d+sz*.5);
+    const off=o.center?(W-lw)/2:0;
+    l.forEach(i=>i.b.draw(CX,x0+off+i.x,Y+a));
+    Y+=a+d+sz*.5;
+  });
+  Y+=o.after||0;
+}
+async function figPdf(svg,wd){
+  const s=svg.replace('<svg ',"<svg xmlns='http://www.w3.org/2000/svg' width='300' height='190' ").replace('</svg>',`<style>.tr{fill:#eef0ff;stroke:#3b4cca;stroke-width:2;stroke-linejoin:round}.ra,.da{fill:none;stroke:#3b4cca;stroke-width:1.5}.da{stroke-dasharray:4 3}text{fill:#111;font:13px Arial,sans-serif;paint-order:stroke;stroke:#fff;stroke-width:3px;stroke-linejoin:round}.u{fill:#3b4cca;font-weight:700}.v{fill:#666;font-weight:700}</style></svg>`);
+  const im=await new Promise(r=>{const i=new Image();i.onload=()=>r(i);i.onerror=()=>r(null);i.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(s);});
+  if(!im)return;
+  const h=wd*190/300;need(h+8);CX.drawImage(im,MG+(CW-wd)/2,Y,wd,h);Y+=h+8;
+}
+function pdfFrom(pages){
+  const enc=s=>new TextEncoder().encode(s),parts=[],off=[];let len=0;
+  const put=b=>{const u=typeof b==='string'?enc(b):b;parts.push(u);len+=u.length;};
+  const obj=(id,body)=>{off[id]=len;put(id+' 0 obj'+NL);put(body);put(NL+'endobj'+NL);};
+  const n=pages.length;
+  put('%PDF-1.4'+NL);
+  obj(1,'<< /Type /Catalog /Pages 2 0 R >>');
+  obj(2,`<< /Type /Pages /Count ${n} /Kids [${pages.map((_,i)=>(3+3*i)+' 0 R').join(' ')}] >>`);
+  pages.forEach((cv,i)=>{
+    const bin=atob(cv.toDataURL('image/jpeg',.92).split(',')[1]),u=new Uint8Array(bin.length);
+    for(let q=0;q<bin.length;q++)u[q]=bin.charCodeAt(q);
+    const id=3+3*i,cont='q 595.28 0 0 841.89 0 0 cm /Im0 Do Q';
+    obj(id,`<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595.28 841.89] /Contents ${id+1} 0 R /Resources << /XObject << /Im0 ${id+2} 0 R >> >> >>`);
+    obj(id+1,`<< /Length ${cont.length} >>${NL}stream${NL}${cont}${NL}endstream`);
+    off[id+2]=len;put(`${id+2} 0 obj${NL}<< /Type /XObject /Subtype /Image /Width ${cv.width} /Height ${cv.height} /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length ${u.length} >>${NL}stream${NL}`);put(u);put(`${NL}endstream${NL}endobj${NL}`);
+  });
+  const xr=len,total=3+3*n;
+  put(`xref${NL}0 ${total}${NL}0000000000 65535 f ${NL}`);
+  for(let i=1;i<total;i++)put(String(off[i]).padStart(10,'0')+' 00000 n '+NL);
+  put(`trailer${NL}<< /Size ${total} /Root 1 0 R >>${NL}startxref${NL}${xr}${NL}%%EOF`);
+  return new Blob(parts,{type:'application/pdf'});
+}
+async function makePdf(btn){
+  btn.disabled=true;btn.textContent='Generando PDF…';
+  try{
+    PG=[];newPage();
+    const dl=['Fácil','Media','Difícil','Mixta'][exDif?exDif-1:3],ds=['Fácil','Media','Difícil'];
+    para('<b>Examen de Matemáticas I</b>',22,{after:2});
+    para(`1.º de Bachillerato (Ciencias y Tecnología) · ${exam.length} ejercicios · Dificultad: ${dl}`,12,{col:'#666',after:8});
+    para('Nombre: ______________________________   Fecha: ______________',13,{after:14});
+    for(let i=0;i<exam.length;i++){
+      const e=exam[i];need(110);
+      para(`${e.f} · ${ds[e.d-1]}`,10.5,{col:'#888'});
+      para(`<b>${i+1}.</b> ${mx(e.o.q)}`,14.5,{after:6});
+      if(e.o.fq&&!HT.includes(e.t))await figPdf(e.o.fq,230);
+      Y+=34;
+    }
+    if($('exSolPdf').checked){
+      newPage();para('<b>Soluciones</b>',20,{after:10});
+      for(let i=0;i<exam.length;i++){
+        const e=exam[i];need(90);
+        para(`<b>${i+1}. ${e.f}</b>`,13.5,{after:3});
+        for(let k=0;k<e.o.steps.length;k++){
+          const s=e.o.steps[k];
+          para(`<b>Paso ${k+1}.</b> ${mx(s[0])}`,12.5,{x:MG+10,w:CW-10});
+          para(mx(s[1]),13.5,{x:MG+28,w:CW-28,after:1});
+          para(`¿Por qué? ${mx(s[2])}`,10.5,{x:MG+28,w:CW-28,col:'#666',after:4});
+        }
+        if(e.o.fs)await figPdf(e.o.fs,200);
+        Y+=12;
+      }
+    }
+    lastPdf=pdfFrom(PG);
+    $('exPrev').innerHTML=`<div class='tag' style='margin:14px 0 6px'>Vista previa del PDF · ${PG.length} páginas</div><button class='btn' data-a='dl'>Descargar PDF</button>`+PG.map(c=>`<img class='pv' src='${c.toDataURL('image/jpeg',.8)}'>`).join('');
+  }catch(err){
+    $('exPrev').innerHTML="<p class='sub' style='margin-top:12px'>No se ha podido generar el PDF en este navegador.</p>";
+  }
+  btn.disabled=false;btn.textContent='Generar PDF del examen';
+}
+async function dlPdf(){
+  if(!lastPdf)return;
+  const name='examen-matematicas.pdf';
+  try{if(window.claude&&claude.use){const d=await claude.use('downloads');if(d){await d.save({filename:name,data:lastPdf});return;}}}catch(err){return;}
+  const a=document.createElement('a');a.href=URL.createObjectURL(lastPdf);a.download=name;document.body.appendChild(a);a.click();a.remove();
+}
+$('exCats').onchange=e=>{const t=e.target;if(t.type==='checkbox')$('n_'+t.id.slice(2)).disabled=!t.checked;};
+$('exOut').onclick=e=>{
+  const b=e.target.closest('button');if(!b)return;
+  const a=b.dataset.a,i=b.dataset.i;
+  if(a==='hint'){$('h'+i).innerHTML=exam[+i].o.fq;b.classList.add('hid');}
+  else if(a==='sol'){const hid=$('s'+i).classList.toggle('hid');b.textContent=hid?'Ver solución':'Ocultar solución';}
+  else if(a==='pdf'){makePdf(b);}else if(a==='dl'){dlPdf();}else if(a==='all'){
+    const show=b.dataset.on!=='1';b.dataset.on=show?'1':'0';b.textContent=show?'Ocultar todas las soluciones':'Mostrar todas las soluciones';
+    exam.forEach((_,k)=>$('s'+k).classList.toggle('hid',!show));
+    $('exOut').querySelectorAll("button[data-a='sol']").forEach(x=>{x.textContent=show?'Ocultar solución':'Ver solución';});
+  }
+};
+tog('modes',c=>{const ex=c.dataset.m==='ex';$('pEj').classList.toggle('hid',ex);$('pEx').classList.toggle('hid',!ex);});
+tog('exDif',c=>{exDif=+c.dataset.d;});
+$('exGo').onclick=genExam;
+buildCats();
+fill();gen();
+</script>
+</body>
+</html>
